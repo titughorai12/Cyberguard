@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | Message Scam Detection</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0b1120;
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+
+        button, textarea {
+            font: inherit;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            padding: 24px 15px;
+            background: #111827;
+            border-right: 1px solid #263244;
+        }
+
+        .brand {
+            color: #60a5fa;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .brand-subtitle {
+            margin-top: 7px;
+            margin-bottom: 32px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .nav-title {
+            margin: 22px 10px 10px;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #93c5fd;
+            background: #1e3a5f;
+        }
+
+        .sidebar-footer {
+            margin-top: 30px;
+            padding: 14px 8px;
+            border-top: 1px solid #263244;
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .muted {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .connection {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: #263244;
+            color: #e5e7eb;
+        }
+
+        .button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .intro {
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #293b62;
+            border-radius: 14px;
+            background: linear-gradient(115deg, #172554, #172033);
+        }
+
+        .intro h2 {
+            margin-bottom: 10px;
+            color: #bfdbfe;
+            font-size: 20px;
+        }
+
+        .intro p {
+            max-width: 800px;
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .notice {
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            border: 1px solid #854d0e;
+            border-radius: 9px;
+            background: #29200e;
+            color: #fde68a;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 20px;
+        }
+
+        .card {
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid #263244;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .card h2 {
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+
+        .card-description {
+            margin-bottom: 22px;
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #d1d5db;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 240px;
+            resize: vertical;
+            padding: 16px;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            outline: none;
+            background: #0b1120;
+            color: #f9fafb;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        textarea:focus {
+            border-color: #3b82f6;
+        }
+
+        textarea::placeholder {
+            color: #6b7280;
+        }
+
+        .input-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 9px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 17px;
+        }
+
+        .example-button {
+            padding: 8px 11px;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            background: #172033;
+            color: #bfdbfe;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .example-button:hover {
+            background: #1e3a5f;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .result-box {
+            min-height: 240px;
+            padding: 18px;
+            border: 1px solid #263244;
+            border-radius: 10px;
+            background: #0b1120;
+        }
+
+        .result-placeholder {
+            display: flex;
+            min-height: 200px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .result-icon {
+            margin-bottom: 14px;
+            font-size: 38px;
+        }
+
+        .result-placeholder h3 {
+            margin-bottom: 9px;
+            font-size: 15px;
+        }
+
+        .result-placeholder p {
+            max-width: 300px;
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .result-status {
+            margin-bottom: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .result-text {
+            color: #d1d5db;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .result-error {
+            color: #fca5a5;
+        }
+
+        .result-details {
+            margin-top: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #263244;
+            font-size: 12px;
+        }
+
+        .detail-row span:first-child {
+            color: #9ca3af;
+        }
+
+        .detail-row span:last-child {
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 16px;
+            }
+
+            .brand-subtitle,
+            .nav-title,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .sidebar nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                margin-top: 16px;
+            }
+
+            .nav-link {
+                padding: 9px;
+                font-size: 11px;
+            }
+
+            .main {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            textarea {
+                min-height: 200px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">🛡 CyberGuard</div>
+        <div class="brand-subtitle">XAI Security Intelligence</div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <nav>
+            <a class="nav-link" href="/assets/pages/dashboard.html">Dashboard</a>
+            <a class="nav-link" href="/assets/pages/url-analysis.html">URL Analysis</a>
+            <a class="nav-link" href="/assets/pages/security-score.html">Security Score</a>
+            <a class="nav-link" href="/assets/pages/threat-dna.html">Threat DNA</a>
+            <a class="nav-link" href="/assets/pages/qr-analysis.html">QR Analysis</a>
+            <a class="nav-link active" href="/assets/pages/message-analysis.html">Message Analysis</a>
+            <a class="nav-link" href="/assets/pages/phone-analysis.html">Phone Risk Check</a>
+            <a class="nav-link" href="/assets/pages/deepfake-analysis.html">Media Validation</a>
+            <a class="nav-link" href="/assets/pages/assistant.html">AI Assistant</a>
+            <a class="nav-link" href="/assets/pages/threats.html">Threat Records</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            CyberGuard XAI Engine<br>
+            Security Analysis Platform
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1>Message Scam Detection</h1>
+                <p class="muted">Analyze suspicious messages for possible scam and phishing indicators.</p>
+                <p class="connection" id="connection-status">Checking backend connection...</p>
+            </div>
+
+            <a class="button button-secondary" href="/assets/pages/dashboard.html">← Dashboard</a>
+        </header>
+
+        <section class="intro">
+            <h2>✉ Message Security Analyzer</h2>
+            <p>
+                Paste an SMS, email, or online message to submit it to CyberGuard.
+                Review the returned findings and use caution when a message asks for
+                money, passwords, verification codes, or urgent action.
+            </p>
+        </section>
+
+        <div class="notice">
+            <strong>Stay safe:</strong>
+            Do not paste passwords, one-time codes, bank details, or other sensitive
+            personal information. Automated analysis can make mistakes and cannot
+            guarantee that a message is safe or fraudulent. If Gemini is configured, message text is sent to Google Gemini for assessment; do not submit sensitive personal data.
+        </div>
+
+        <div class="grid">
+
+            <section class="card">
+                <h2>Message Input</h2>
+                <p class="card-description">
+                    Paste the message you want to analyze below.
+                </p>
+
+                <form id="analysis-form">
+                    <label for="message-input">Suspicious Message</label>
+
+                    <textarea
+                        id="message-input"
+                        maxlength="10000"
+                        placeholder="Example: Your account has been suspended. Click this link immediately to verify your details..."
+                        required
+                    ></textarea>
+
+                    <div class="input-info">
+                        <span>Maximum 10,000 characters</span>
+                        <span id="character-count">0 / 10000</span>
+                    </div>
+
+                    <div class="examples">
+                        <button class="example-button" type="button" data-example="Congratulations! You have won a prize. Pay a processing fee now to claim it.">
+                            Prize scam example
+                        </button>
+
+                        <button class="example-button" type="button" data-example="Your bank account will be blocked today. Click this unknown link and enter your password immediately.">
+                            Phishing example
+                        </button>
+
+                        <button class="example-button" type="button" data-example="This is your company CEO. Make an urgent wire transfer now and do not call me to confirm.">
+                            Authority impersonation example
+                        </button>
+
+                        <button class="example-button" type="button" data-example="Hi, are we still meeting at the library at 4 PM today?">
+                            Normal message example
+                        </button>
+                    </div>
+
+                    <div class="actions">
+                        <button class="button button-primary" id="analyze-button" type="submit">
+                            Analyze Message
+                        </button>
+
+                        <button class="button button-secondary" id="clear-button" type="button">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Analysis Result</h2>
+                <p class="card-description">
+                    The findings returned by the CyberGuard API will appear here.
+                </p>
+
+                <div class="result-box" aria-live="polite">
+                    <div class="result-placeholder" id="result-placeholder">
+                        <div class="result-icon">🔍</div>
+                        <h3>Ready to Analyze</h3>
+                        <p>Enter a message and select Analyze Message to see the API response.</p>
+                    </div>
+
+                    <div id="result-content" hidden>
+                        <div class="result-status" id="result-status"></div>
+                        <div class="result-text" id="result-text"></div>
+                    </div>
+                </div>
+
+                <div class="result-details">
+                    <div class="detail-row">
+                        <span>API endpoint</span>
+                        <span>/api/v1/message</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Request status</span>
+                        <span id="request-status">Waiting</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="footer">
+            CyberGuard XAI Engine · Security analysis and awareness
+        </footer>
+
+    </main>
+</div>
+
+<script>
+    const API_URL = "/api/v1/message";
+
+    const form = document.getElementById("analysis-form");
+    const messageInput = document.getElementById("message-input");
+    const analyzeButton = document.getElementById("analyze-button");
+    const clearButton = document.getElementById("clear-button");
+    const characterCount = document.getElementById("character-count");
+
+    const resultPlaceholder = document.getElementById("result-placeholder");
+    const resultContent = document.getElementById("result-content");
+    const resultStatus = document.getElementById("result-status");
+    const resultText = document.getElementById("result-text");
+    const requestStatus = document.getElementById("request-status");
+
+    function updateCharacterCount() {
+        characterCount.textContent =
+            messageInput.value.length + " / 10000";
+    }
+
+    function showResult(title, message, isError) {
+        resultPlaceholder.hidden = true;
+        resultContent.hidden = false;
+
+        resultStatus.textContent = title;
+        resultStatus.style.color = isError ? "#f87171" : "#60a5fa";
+
+        resultText.textContent = message;
+        resultText.className = isError
+            ? "result-text result-error"
+            : "result-text";
+    }
+
+    function displayResponse(result) {
+        const data = result && result.data ? result.data : {};
+        const severity = String(data.severity || "unknown").toUpperCase();
+        const evidence = Array.isArray(data.indicators) ? data.indicators : [];
+        const method = data.analysis_type === "hybrid_rule_ai"
+            ? `Gemini AI + rules (${data.ai_model || "configured model"})`
+            : `Rules only · ${data.ai_status || "AI unavailable"}`;
+        const lines = [
+            `Detection method: ${method}`,
+            `Classification: ${data.event_type || "message review"}`,
+            `Risk: ${data.risk_score ?? "—"}/100 · ${severity}`,
+            "",
+            "Why this was flagged",
+            data.explanation || "No explanation was returned.",
+            "",
+            "Evidence",
+            ...(evidence.length ? evidence.map(item => `• ${item}`) : ["• No configured warning patterns were found."]),
+            "",
+            "Recommended response",
+            data.recommended_action || "Verify the sender using a trusted channel."
+        ];
+        showResult(`${severity} MESSAGE ASSESSMENT · ${data.risk_score ?? "—"}/100`, lines.join("\n"), false);
+    }
+
+    async function checkBackend() {
+        const status = document.getElementById("connection-status");
+
+        try {
+            const response = await fetch("/health");
+
+            if (!response.ok) {
+                throw new Error("Health check failed");
+            }
+
+            const result = await response.json();
+
+            if (result.status === "healthy") {
+                status.textContent = "● Backend connected";
+                status.style.color = "#34d399";
+            } else {
+                status.textContent = "● Backend available; database needs attention";
+                status.style.color = "#fbbf24";
+            }
+        } catch (error) {
+            status.textContent = "● Backend connection failed";
+            status.style.color = "#f87171";
+        }
+    }
+
+    messageInput.addEventListener("input", updateCharacterCount);
+
+    document.querySelectorAll(".example-button").forEach(function (button) {
+        button.addEventListener("click", function () {
+            messageInput.value = button.dataset.example || "";
+            updateCharacterCount();
+            messageInput.focus();
+        });
+    });
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            showResult("Message Required", "Please enter a message to analyze.", true);
+            return;
+        }
+
+        analyzeButton.disabled = true;
+        clearButton.disabled = true;
+        requestStatus.textContent = "Analyzing...";
+
+        showResult(
+            "Analysis in Progress",
+            "Sending the message to the CyberGuard backend...",
+            false
+        );
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            });
+
+            const rawText = await response.text();
+            let result;
+
+            try {
+                result = JSON.parse(rawText);
+            } catch (error) {
+                result = {
+                    message: rawText || "The server returned an empty response."
+                };
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    result.detail ||
+                    result.message ||
+                    "Request failed with HTTP " + response.status
+                );
+            }
+
+            requestStatus.textContent = "Completed";
+            displayResponse(result);
+
+        } catch (error) {
+            requestStatus.textContent = "Failed";
+
+            showResult(
+                "Analysis Failed",
+                error.message +
+                "\n\nCheck the backend request schema at /docs and make sure the endpoint is running.",
+                true
+            );
+
+            console.error("Message analysis error:", error);
+
+        } finally {
+            analyzeButton.disabled = false;
+            clearButton.disabled = false;
+        }
+    });
+
+    clearButton.addEventListener("click", function () {
+        messageInput.value = "";
+        updateCharacterCount();
+
+        resultContent.hidden = true;
+        resultPlaceholder.hidden = false;
+
+        resultStatus.textContent = "";
+        resultText.textContent = "";
+        requestStatus.textContent = "Waiting";
+
+        messageInput.focus();
+    });
+
+    checkBackend();
+</script>
+
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+
+

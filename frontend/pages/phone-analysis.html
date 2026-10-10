@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Risk Check | CyberGuard</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #0b1120;
+        color: #e5e7eb;
+        min-height: 100vh;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 245px;
+        background: #111827;
+        border-right: 1px solid #263247;
+        padding: 28px 18px;
+        flex-shrink: 0;
+    }
+
+    .brand {
+        font-size: 23px;
+        font-weight: bold;
+        color: #60a5fa;
+        margin-bottom: 8px;
+    }
+
+    .brand-subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 35px;
+    }
+
+    .nav-title {
+        color: #6b7280;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 20px 10px 12px;
+    }
+
+    .nav-link {
+        display: block;
+        text-decoration: none;
+        color: #cbd5e1;
+        padding: 13px 12px;
+        border-radius: 8px;
+        margin-bottom: 7px;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: #1e3a5f;
+        color: #93c5fd;
+    }
+
+    .main {
+        flex: 1;
+        padding: 30px;
+        min-width: 0;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .topbar h1 {
+        font-size: 27px;
+        margin-bottom: 7px;
+    }
+
+    .topbar p {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #9ca3af;
+        background: #111827;
+        border: 1px solid #263247;
+        padding: 10px 13px;
+        border-radius: 20px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #f59e0b;
+        border-radius: 50%;
+    }
+
+    .status-dot.online {
+        background: #34d399;
+    }
+
+    .card {
+        background: #111827;
+        border: 1px solid #263247;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 22px;
+    }
+
+    .card h2 {
+        font-size: 19px;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 24px;
+    }
+
+    label {
+        display: block;
+        color: #cbd5e1;
+        font-size: 13px;
+        margin-bottom: 9px;
+        font-weight: bold;
+    }
+
+    input,
+    select {
+        width: 100%;
+        background: #0b1120;
+        border: 1px solid #374151;
+        color: #f9fafb;
+        padding: 13px 14px;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: #60a5fa;
+    }
+
+    .form-group {
+        margin-bottom: 21px;
+    }
+
+    .hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 8px;
+        line-height: 1.5;
+    }
+
+    .button-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .primary-button {
+        background: #2563eb;
+        color: white;
+    }
+
+    .primary-button:hover {
+        background: #1d4ed8;
+    }
+
+    .secondary-button {
+        background: #263247;
+        color: #e5e7eb;
+    }
+
+    .secondary-button:hover {
+        background: #374151;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .message {
+        display: none;
+        margin-top: 18px;
+        padding: 13px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .message.error {
+        display: block;
+        background: #451a1a;
+        border: 1px solid #7f1d1d;
+        color: #fecaca;
+    }
+
+    .message.success {
+        display: block;
+        background: #064e3b;
+        border: 1px solid #065f46;
+        color: #a7f3d0;
+    }
+
+    .message.info {
+        display: block;
+        background: #172554;
+        border: 1px solid #1e40af;
+        color: #bfdbfe;
+    }
+
+    .result-card {
+        display: none;
+    }
+
+    .result-card h2 {
+        margin-bottom: 17px;
+    }
+
+    .result-box {
+        background: #0b1120;
+        border: 1px solid #263247;
+        border-radius: 10px;
+        padding: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .result-box pre {
+        color: #cbd5e1;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .assessment-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .assessment { background: #0b1120; border: 1px solid #263247; border-radius: 12px; padding: 20px; }
+    .assessment-label { color: #9ca3af; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .assessment h3 { font-size: 21px; margin: 10px 0 8px; }
+    .assessment p, .detail-text { color: #9ca3af; font-size: 13px; line-height: 1.65; }
+    .assessment.format-valid h3 { color: #34d399; }
+    .assessment.format-invalid h3 { color: #f87171; }
+    .assessment.spam-unknown h3 { color: #fbbf24; }
+    .screening-score { margin: 0 0 16px; padding: 16px 20px; background: #0b1120; border: 1px solid #263247; border-radius: 12px; }
+    .screening-score-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .screening-score-header h3 { margin: 0; font-size: 16px; }
+    .screening-score-value { color: #67e8f9; font-size: 25px; font-weight: 700; }
+    .score-track { height: 7px; margin: 12px 0 8px; overflow: hidden; background: #1e293b; border-radius: 99px; }
+    .score-fill { height: 100%; width: 0; background: linear-gradient(90deg, #34d399, #fbbf24, #f87171); border-radius: inherit; transition: width .25s ease; }
+    .screening-score p { color: #9ca3af; font-size: 12px; line-height: 1.6; margin: 0; }
+    .result-section { margin: 20px 0; }
+    .result-section h3 { font-size: 15px; margin-bottom: 9px; }
+    #indicators { color: #cbd5e1; padding-left: 20px; line-height: 1.7; }
+    .result-meta { color: #6b7280; font-size: 12px; line-height: 1.6; margin-top: 20px; }
+    @media (max-width: 600px) { .assessment-grid { grid-template-columns: 1fr; } }
+
+    .notice {
+        font-size: 12px;
+        line-height: 1.7;
+        color: #9ca3af;
+        border-left: 3px solid #f59e0b;
+        padding: 10px 13px;
+        margin-top: 22px;
+        background: #1f1b12;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .footer {
+        color: #6b7280;
+        font-size: 12px;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    @media (max-width: 800px) {
+        .layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #263247;
+            padding: 20px;
+        }
+
+        .brand-subtitle {
+            margin-bottom: 15px;
+        }
+
+        .nav-title {
+            margin-top: 15px;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        .topbar h1 {
+            font-size: 23px;
+        }
+    }
+</style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+    <div class="brand">CyberGuard</div>
+    <div class="brand-subtitle">XAI Security Engine</div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <a class="nav-link" href="/assets/pages/dashboard.html">Dashboard</a>
+    <a class="nav-link" href="/assets/pages/assistant.html">AI Assistant</a>
+    <a class="nav-link" href="/assets/pages/message-analysis.html">Message Analysis</a>
+    <a class="nav-link active" href="/assets/pages/phone-analysis.html">Phone Risk Check</a>
+    <a class="nav-link" href="/assets/pages/deepfake-analysis.html">Media Validation</a>
+
+    <div class="nav-title">Security</div>
+
+    <a class="nav-link" href="/assets/pages/threat-dna.html">Threat DNA</a>
+    <a class="nav-link" href="/docs" target="_blank" rel="noopener">API Documentation</a>
+</aside>
+
+<main class="main">
+    <header class="topbar">
+        <div>
+            <h1>Phone Risk Check</h1>
+            <p>Review number format and see whether spam reputation was checked.</p>
+        </div>
+
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="serverStatus">Checking server...</span>
+        </div>
+    </header>
+
+    <section class="card">
+        <h2>Check a phone number</h2>
+
+        <p class="description">
+            CyberGuard checks whether digits fit the selected region’s expected format. Spam reputation is separate and remains unknown until a reputation source is connected.
+        </p>
+
+        <form id="phoneForm">
+            <div class="form-group">
+                <label for="region">Numbering region</label>
+                <select id="region" name="region">
+                    <option value="IN" selected>India (+91)</option>
+                    <option value="US">United States (+1)</option>
+                    <option value="GB">United Kingdom (+44)</option>
+                    <option value="OTHER">Other / international</option>
+                </select>
+                <p class="hint">This setting only affects the format check.</p>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+
+                <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phone"
+                    placeholder="Example: +91 9876543210"
+                    maxlength="25"
+                    autocomplete="tel"
+                    required
+                >
+
+                <p class="hint">
+                    Include the country code when available. Do not enter passwords,
+                    OTPs, or other private information.
+                </p>
+            </div>
+
+            <div class="button-row">
+                <button class="primary-button" id="analyzeButton" type="submit">
+                    Check Number
+                </button>
+
+                <button class="secondary-button" id="clearButton" type="button">
+                    Clear
+                </button>
+            </div>
+
+            <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="notice">
+            <strong>Important:</strong> A valid-looking format does not prove a number is assigned, reachable, or owned by the claimed person. Spam status needs a reputation source and is not checked here.
+        </div>
+    </section>
+
+    <section class="card result-card" id="resultCard">
+        <h2>Phone assessment</h2>
+        <article class="screening-score" aria-live="polite">
+            <div class="screening-score-header">
+                <h3>Format anomaly screening score</h3>
+                <span class="screening-score-value" id="riskScore">—/100</span>
+            </div>
+            <div class="score-track" role="meter" aria-label="Format anomaly screening score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="score-fill" id="riskScoreFill"></div>
+            </div>
+            <p id="scoreNote">This score reflects number-format anomalies only. It is not a spam probability or reputation verdict.</p>
+        </article>
+        <div class="assessment-grid">
+            <article class="assessment" id="formatAssessment">
+                <div class="assessment-label">Number format</div>
+                <h3 id="formatStatus">—</h3>
+                <p id="formatNote"></p>
+            </article>
+            <article class="assessment spam-unknown">
+                <div class="assessment-label">Spam reputation</div>
+                <h3 id="spamStatus">Unknown — not checked</h3>
+                <p id="spamNote"></p>
+            </article>
+        </div>
+        <div class="result-section"><h3>Indicators</h3><ul id="indicators"></ul></div>
+        <div class="result-section"><h3>Recommended next step</h3><p class="detail-text" id="recommendedAction"></p></div>
+        <p class="result-meta" id="disclaimer"></p>
+    </section>
+
+    <div class="footer">
+        CyberGuard XAI Engine &mdash; Phone Risk Check
+    </div>
+</main>
+</div>
+
+<script>
+    const phoneForm = document.getElementById("phoneForm");
+    const phoneInput = document.getElementById("phoneNumber");
+    const analyzeButton = document.getElementById("analyzeButton");
+    const clearButton = document.getElementById("clearButton");
+    const formMessage = document.getElementById("formMessage");
+    const resultCard = document.getElementById("resultCard");
+    const regionInput = document.getElementById("region");
+    const formatAssessment = document.getElementById("formatAssessment");
+    const riskScore = document.getElementById("riskScore");
+    const riskScoreFill = document.getElementById("riskScoreFill");
+    const scoreTrack = document.querySelector(".score-track");
+    const scoreNote = document.getElementById("scoreNote");
+    const formatStatus = document.getElementById("formatStatus");
+    const formatNote = document.getElementById("formatNote");
+    const spamStatus = document.getElementById("spamStatus");
+    const spamNote = document.getElementById("spamNote");
+    const indicators = document.getElementById("indicators");
+    const recommendedAction = document.getElementById("recommendedAction");
+    const disclaimer = document.getElementById("disclaimer");
+    const serverStatus = document.getElementById("serverStatus");
+    const statusDot = document.getElementById("statusDot");
+
+    function showMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.className = "message " + type;
+    }
+
+    function clearMessage() {
+        formMessage.textContent = "";
+        formMessage.className = "message";
+    }
+
+    async function checkServer() {
+        try {
+            const response = await fetch("/health");
+            if (!response.ok) {
+                throw new Error("Health check failed");
+            }
+
+            serverStatus.textContent = "Server connected";
+            statusDot.classList.add("online");
+        } catch (error) {
+            serverStatus.textContent = "Server unavailable";
+            statusDot.classList.remove("online");
+        }
+    }
+
+    phoneForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        clearMessage();
+
+        const phone = phoneInput.value.trim();
+
+        if (!phone) {
+            showMessage("Please enter a phone number.", "error");
+            return;
+        }
+
+        if (phone.replace(/\D/g, "").length < 7) {
+            showMessage("Please enter a valid-looking phone number with at least 7 digits.", "error");
+            return;
+        }
+
+        analyzeButton.disabled = true;
+        analyzeButton.textContent = "Analyzing...";
+        resultCard.style.display = "none";
+
+        try {
+            const response = await fetch("/api/v1/phone", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ phone_number: phone, region: regionInput.value })
+            });
+
+            const responseText = await response.text();
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                result = { response: responseText };
+            }
+
+            if (!response.ok || result.success === false || !result.data) {
+                showMessage(
+                    result.message || ("The server returned HTTP " + response.status + ". Please try again."),
+                    "error"
+                );
+                return;
+            }
+
+            const data = result.data;
+            resultCard.style.display = "block";
+            const score = Number.isFinite(Number(data.risk_score)) ? Math.max(0, Math.min(100, Number(data.risk_score))) : null;
+            riskScore.textContent = score === null ? "Not available" : `${score}/100`;
+            riskScoreFill.style.width = score === null ? "0%" : `${score}%`;
+            scoreTrack.setAttribute("aria-valuenow", score === null ? "0" : String(score));
+            scoreNote.textContent = data.score_note || "This score reflects number-format anomalies only. It is not a spam probability or reputation verdict.";
+            formatStatus.textContent = data.format_status || (data.format_valid ? "Valid-looking format" : "Invalid format");
+            formatAssessment.classList.toggle("format-valid", Boolean(data.format_valid));
+            formatAssessment.classList.toggle("format-invalid", !data.format_valid);
+            formatNote.textContent = data.format_note || "No format details provided.";
+            spamStatus.textContent = data.spam_checked ? (data.spam_status || "Checked") : "Unknown — not checked";
+            spamNote.textContent = data.spam_note || "No phone reputation source is connected.";
+            recommendedAction.textContent = data.recommended_action || "Verify the caller through a trusted channel.";
+            disclaimer.textContent = data.disclaimer || "Format checks do not verify ownership or spam reputation.";
+            indicators.replaceChildren();
+            (Array.isArray(data.indicators) ? data.indicators : []).forEach(function (item) {
+                const li = document.createElement("li");
+                li.textContent = String(item);
+                indicators.appendChild(li);
+            });
+            if (!indicators.children.length) {
+                const li = document.createElement("li");
+                li.textContent = "No simple digit-pattern indicators found.";
+                indicators.appendChild(li);
+            }
+            showMessage("Analysis complete. Spam reputation was not checked.", "info");
+        } catch (error) {
+            showMessage(
+                "Unable to connect to the phone analysis API. Make sure the FastAPI server is running at http://127.0.0.1:8000.",
+                "error"
+            );
+        } finally {
+            analyzeButton.disabled = false;
+            analyzeButton.textContent = "Check Number";
+        }
+    });
+
+    clearButton.addEventListener("click", function () {
+        phoneForm.reset();
+        clearMessage();
+        resultCard.style.display = "none";
+        indicators.replaceChildren();
+    });
+
+    checkServer();
+</script>
+
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

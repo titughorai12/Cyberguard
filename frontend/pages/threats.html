@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Monitoring | CyberGuard</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #0b1120;
+        color: #e5e7eb;
+        min-height: 100vh;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 245px;
+        flex-shrink: 0;
+        background: #111827;
+        border-right: 1px solid #263247;
+        padding: 28px 18px;
+    }
+
+    .brand {
+        color: #60a5fa;
+        font-size: 23px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .brand-subtitle {
+        color: #9ca3af;
+        font-size: 12px;
+        margin-bottom: 35px;
+    }
+
+    .nav-title {
+        color: #6b7280;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 20px 10px 12px;
+    }
+
+    .nav-link {
+        display: block;
+        color: #cbd5e1;
+        text-decoration: none;
+        padding: 13px 12px;
+        border-radius: 8px;
+        margin-bottom: 7px;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: #1e3a5f;
+        color: #93c5fd;
+    }
+
+    .main {
+        flex: 1;
+        min-width: 0;
+        padding: 30px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+        font-size: 27px;
+        margin-bottom: 8px;
+    }
+
+    .topbar p {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9ca3af;
+        background: #111827;
+        border: 1px solid #263247;
+        padding: 10px 13px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #f59e0b;
+        border-radius: 50%;
+    }
+
+    .status-dot.online {
+        background: #34d399;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: #111827;
+        border: 1px solid #263247;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .stat-label {
+        color: #9ca3af;
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    .stat-number {
+        font-size: 30px;
+        font-weight: bold;
+        color: #f9fafb;
+    }
+
+    .stat-note {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 8px;
+    }
+
+    .card {
+        background: #111827;
+        border: 1px solid #263247;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 22px;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .card-header h2 {
+        font-size: 19px;
+    }
+
+    .card-header p {
+        color: #9ca3af;
+        font-size: 13px;
+        margin-top: 7px;
+    }
+
+    .filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    select,
+    input {
+        background: #0b1120;
+        color: #e5e7eb;
+        border: 1px solid #374151;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 13px;
+        outline: none;
+        max-width: 100%;
+    }
+
+    select:focus,
+    input:focus {
+        border-color: #60a5fa;
+    }
+
+    input {
+        min-width: 190px;
+    }
+
+    button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 11px 16px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    th,
+    td {
+        padding: 15px 13px;
+        text-align: left;
+        border-bottom: 1px solid #263247;
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+    th {
+        color: #9ca3af;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        font-weight: bold;
+    }
+
+    td {
+        color: #cbd5e1;
+        overflow-wrap: anywhere;
+    }
+
+    tbody tr:hover {
+        background: #172033;
+    }
+
+    .badge {
+        display: inline-block;
+        border-radius: 20px;
+        padding: 5px 9px;
+        font-size: 11px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .badge.high,
+    .badge.critical {
+        background: #451a1a;
+        color: #fca5a5;
+    }
+
+    .badge.medium {
+        background: #422006;
+        color: #fcd34d;
+    }
+
+    .badge.low {
+        background: #064e3b;
+        color: #6ee7b7;
+    }
+
+    .badge.unknown {
+        background: #263247;
+        color: #cbd5e1;
+    }
+
+    .empty-state {
+        padding: 35px 15px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .message {
+        display: none;
+        padding: 13px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .message.error {
+        display: block;
+        background: #451a1a;
+        border: 1px solid #7f1d1d;
+        color: #fecaca;
+    }
+
+    .message.success {
+        display: block;
+        background: #064e3b;
+        border: 1px solid #065f46;
+        color: #a7f3d0;
+    }
+
+    .message.info {
+        display: block;
+        background: #172554;
+        border: 1px solid #1e40af;
+        color: #bfdbfe;
+    }
+
+    .notice {
+        padding: 12px 14px;
+        border-left: 3px solid #f59e0b;
+        background: #1f1b12;
+        color: #9ca3af;
+        font-size: 12px;
+        line-height: 1.7;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .footer {
+        color: #6b7280;
+        font-size: 12px;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    @media (max-width: 1100px) {
+        .stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 800px) {
+        .layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #263247;
+            padding: 20px;
+        }
+
+        .brand-subtitle {
+            margin-bottom: 15px;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        .topbar h1 {
+            font-size: 23px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats {
+            grid-template-columns: 1fr;
+        }
+
+        .filters {
+            width: 100%;
+        }
+
+        .filters input,
+        .filters select {
+            width: 100%;
+        }
+    }
+</style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+    <div class="brand">CyberGuard</div>
+    <div class="brand-subtitle">XAI Security Engine</div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <a class="nav-link" href="/assets/pages/dashboard.html">Dashboard</a>
+    <a class="nav-link" href="/assets/pages/assistant.html">AI Assistant</a>
+    <a class="nav-link" href="/assets/pages/message-analysis.html">Message Analysis</a>
+    <a class="nav-link" href="/assets/pages/phone-analysis.html">Phone Risk Check</a>
+    <a class="nav-link" href="/assets/pages/qr-analysis.html">QR Analysis</a>
+    <a class="nav-link" href="/assets/pages/deepfake-analysis.html">Media Validation</a>
+    <a class="nav-link" href="/assets/pages/security-score.html">Security Score</a>
+    <a class="nav-link active" href="/assets/pages/threats.html">Threat Monitoring</a>
+
+    <div class="nav-title">Security</div>
+
+    <a class="nav-link" href="/assets/pages/threat-dna.html">Threat DNA</a>
+    <a class="nav-link" href="/docs" target="_blank" rel="noopener">API Documentation</a>
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <div>
+            <h1>Threat Monitoring</h1>
+            <p>Review threat records returned by the CyberGuard backend.</p>
+        </div>
+
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="serverStatus">Checking server...</span>
+        </div>
+    </header>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Total Records</div>
+            <div class="stat-number" id="totalCount">--</div>
+            <div class="stat-note">Records returned by the API</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Critical / High</div>
+            <div class="stat-number" id="highCount">--</div>
+            <div class="stat-note">Records labelled high or critical</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Medium</div>
+            <div class="stat-number" id="mediumCount">--</div>
+            <div class="stat-note">Records labelled medium</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Low</div>
+            <div class="stat-number" id="lowCount">--</div>
+            <div class="stat-note">Records labelled low</div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <h2>Threat Records</h2>
+                <p id="recordDescription">Load the latest available records from the API.</p>
+            </div>
+
+            <div class="filters">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search threats..."
+                    aria-label="Search threat records"
+                >
+
+                <select id="severityFilter" aria-label="Filter by severity">
+                    <option value="all">All severities</option>
+                    <option value="critical">Critical</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="unknown">Unspecified</option>
+                </select>
+
+                <button id="refreshButton" type="button">Refresh</button>
+            </div>
+        </div>
+
+        <div id="pageMessage" class="message" role="status" aria-live="polite"></div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Threat / Target</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+
+                <tbody id="threatTableBody">
+                <tr>
+                    <td colspan="5" class="empty-state">Loading threat records...</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2 style="font-size: 17px; margin-bottom: 12px;">About This Page</h2>
+
+        <div class="notice">
+            The table and counts are based on records returned by your API.
+            If no records appear, it may mean the API returned an empty list,
+            uses a different response format, or encountered an error.
+            Severity labels are displayed as supplied by the backend; they are
+            not independent verification that a target is malicious.
+        </div>
+    </section>
+
+    <div class="footer">
+        CyberGuard XAI Engine &mdash; Threat Monitoring
+    </div>
+</main>
+</div>
+
+<script>
+    const serverStatus = document.getElementById("serverStatus");
+    const statusDot = document.getElementById("statusDot");
+    const totalCount = document.getElementById("totalCount");
+    const highCount = document.getElementById("highCount");
+    const mediumCount = document.getElementById("mediumCount");
+    const lowCount = document.getElementById("lowCount");
+    const recordDescription = document.getElementById("recordDescription");
+    const pageMessage = document.getElementById("pageMessage");
+    const threatTableBody = document.getElementById("threatTableBody");
+    const searchInput = document.getElementById("searchInput");
+    const severityFilter = document.getElementById("severityFilter");
+    const refreshButton = document.getElementById("refreshButton");
+
+    let threatRecords = [];
+
+    function showMessage(text, type) {
+        pageMessage.textContent = text;
+        pageMessage.className = "message " + type;
+    }
+
+    function clearMessage() {
+        pageMessage.textContent = "";
+        pageMessage.className = "message";
+    }
+
+    function getSeverity(record) {
+        const value =
+            record.severity ??
+            record.risk_level ??
+            record.level ??
+            record.priority ??
+            "";
+
+        const severity = String(value).toLowerCase();
+
+        if (severity.includes("critical")) return "critical";
+        if (severity.includes("high")) return "high";
+        if (severity.includes("medium") || severity.includes("moderate")) {
+            return "medium";
+        }
+        if (severity.includes("low")) return "low";
+
+        return "unknown";
+    }
+
+    function getRecords(responseData) {
+        if (Array.isArray(responseData)) {
+            return responseData;
+        }
+
+        if (!responseData || typeof responseData !== "object") {
+            return [];
+        }
+
+        const possibleKeys = [
+            "data",
+            "threats",
+            "records",
+            "results",
+            "items"
+        ];
+
+        for (const key of possibleKeys) {
+            if (Array.isArray(responseData[key])) {
+                return responseData[key];
+            }
+        }
+
+        if (responseData.data && typeof responseData.data === "object") {
+            return getRecords(responseData.data);
+        }
+
+        return [];
+    }
+
+    function getTarget(record) {
+        return (
+            record.url ??
+            record.target ??
+            record.domain ??
+            record.phone_number ??
+            record.name ??
+            record.message ??
+            record.title ??
+            record.id ??
+            "Unspecified"
+        );
+    }
+
+    function getType(record) {
+        return (
+            record.type ??
+            record.threat_type ??
+            record.analysis_type ??
+            record.category ??
+            "Unspecified"
+        );
+    }
+
+    function getStatus(record) {
+        return (
+            record.status ??
+            record.state ??
+            record.result ??
+            "Unspecified"
+        );
+    }
+
+    function getDate(record) {
+        return (
+            record.created_at ??
+            record.createdAt ??
+            record.timestamp ??
+            record.date ??
+            "Unspecified"
+        );
+    }
+
+    function makeCell(text) {
+        const cell = document.createElement("td");
+        cell.textContent = String(text ?? "Unspecified");
+        return cell;
+    }
+
+    function renderRecords() {
+        const searchText = searchInput.value.trim().toLowerCase();
+        const selectedSeverity = severityFilter.value;
+
+        const filteredRecords = threatRecords.filter(function (record) {
+            const searchableText = [
+                getTarget(record),
+                getType(record),
+                getSeverity(record),
+                getStatus(record),
+                getDate(record)
+            ].join(" ").toLowerCase();
+
+            const matchesSearch = searchableText.includes(searchText);
+
+            const severity = getSeverity(record);
+            const matchesSeverity =
+                selectedSeverity === "all" ||
+                severity === selectedSeverity;
+
+            return matchesSearch && matchesSeverity;
+        });
+
+        threatTableBody.replaceChildren();
+
+        if (filteredRecords.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 5;
+            cell.className = "empty-state";
+            cell.textContent = threatRecords.length === 0
+                ? "No threat records were returned by the API."
+                : "No records match your search or severity filter.";
+
+            row.appendChild(cell);
+            threatTableBody.appendChild(row);
+            return;
+        }
+
+        filteredRecords.forEach(function (record) {
+            const row = document.createElement("tr");
+
+            row.appendChild(makeCell(getTarget(record)));
+            row.appendChild(makeCell(getType(record)));
+
+            const severityCell = document.createElement("td");
+            const severityBadge = document.createElement("span");
+            const severity = getSeverity(record);
+
+            severityBadge.className = "badge " + severity;
+            severityBadge.textContent =
+                severity === "unknown"
+                    ? "Unspecified"
+                    : severity.charAt(0).toUpperCase() + severity.slice(1);
+
+            severityCell.appendChild(severityBadge);
+            row.appendChild(severityCell);
+
+            row.appendChild(makeCell(getStatus(record)));
+            row.appendChild(makeCell(getDate(record)));
+
+            threatTableBody.appendChild(row);
+        });
+    }
+
+    function updateStatistics() {
+        const criticalOrHigh = threatRecords.filter(function (record) {
+            const severity = getSeverity(record);
+            return severity === "critical" || severity === "high";
+        }).length;
+
+        const medium = threatRecords.filter(function (record) {
+            return getSeverity(record) === "medium";
+        }).length;
+
+        const low = threatRecords.filter(function (record) {
+            return getSeverity(record) === "low";
+        }).length;
+
+        totalCount.textContent = threatRecords.length;
+        highCount.textContent = criticalOrHigh;
+        mediumCount.textContent = medium;
+        lowCount.textContent = low;
+
+        recordDescription.textContent =
+            threatRecords.length + " record(s) received from the backend.";
+    }
+
+    async function checkServer() {
+        try {
+            const response = await fetch("/health");
+
+            if (!response.ok) {
+                throw new Error("Health check failed");
+            }
+
+            serverStatus.textContent = "Server connected";
+            statusDot.classList.add("online");
+        } catch (error) {
+            serverStatus.textContent = "Server unavailable";
+            statusDot.classList.remove("online");
+        }
+    }
+
+    async function loadThreats() {
+        refreshButton.disabled = true;
+        refreshButton.textContent = "Loading...";
+        clearMessage();
+
+        threatTableBody.replaceChildren();
+
+        const loadingRow = document.createElement("tr");
+        const loadingCell = document.createElement("td");
+
+        loadingCell.colSpan = 5;
+        loadingCell.className = "empty-state";
+        loadingCell.textContent = "Loading threat records...";
+
+        loadingRow.appendChild(loadingCell);
+        threatTableBody.appendChild(loadingRow);
+
+        try {
+            const response = await fetch("/api/v1/threats", {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            const responseText = await response.text();
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                result = {
+                    response: responseText
+                };
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    "HTTP " + response.status + ": " +
+                    (result.detail || result.message || result.response || "Request failed")
+                );
+            }
+
+            threatRecords = getRecords(result);
+
+            updateStatistics();
+            renderRecords();
+
+            if (threatRecords.length === 0) {
+                showMessage(
+                    "The API responded successfully, but no threat records were found in the expected list format.",
+                    "info"
+                );
+            } else {
+                showMessage(
+                    "Threat records loaded successfully.",
+                    "success"
+                );
+            }
+        } catch (error) {
+            threatRecords = [];
+
+            totalCount.textContent = "--";
+            highCount.textContent = "--";
+            mediumCount.textContent = "--";
+            lowCount.textContent = "--";
+            recordDescription.textContent = "Unable to load threat records.";
+
+            renderRecords();
+
+            showMessage(
+                "Could not load threat records. " + error.message +
+                " Check that the backend is running and review /docs.",
+                "error"
+            );
+        } finally {
+            refreshButton.disabled = false;
+            refreshButton.textContent = "Refresh";
+        }
+    }
+
+    searchInput.addEventListener("input", renderRecords);
+    severityFilter.addEventListener("change", renderRecords);
+    refreshButton.addEventListener("click", loadThreats);
+
+    checkServer();
+    loadThreats();
+</script>
+
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

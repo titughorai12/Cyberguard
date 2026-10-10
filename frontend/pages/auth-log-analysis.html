@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d19">
+  <title>CyberGuard | Authentication Anomaly Lab</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <style>
+    .lab-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:18px;align-items:start}
+    .content-card{margin-top:0}.input-area{min-height:310px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .pill{display:inline-flex;padding:5px 10px;border-radius:99px;background:#192b43;color:#9fc2ff;font-size:11px;font-weight:700}
+    .score-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0}
+    .score{font-size:38px;font-weight:750;letter-spacing:-1px}.meter{height:8px;border-radius:20px;background:#202d40;overflow:hidden}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,#35d49a,#ffca68,#ff7185);transition:width .3s}
+    .result-list{padding-left:20px;color:#d7e1f3}.result-list li{margin:8px 0}.callout{padding:13px;border:1px solid #30466a;border-radius:10px;background:#111d30;color:#c9d7ec;font-size:13px}
+    .sample-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.sample-row button{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--panel-light);color:var(--text)}
+    @media(max-width:850px){.lab-grid{grid-template-columns:1fr}}
+  </style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-icon">C</div><div>CyberGuard<small>XAI Security Engine</small></div></div>
+    <div class="nav-label">Operations</div>
+    <nav>
+      <a href="/">◫ &nbsp;SOC Dashboard</a>
+      <a href="/assets/pages/url-analysis.html">↗ &nbsp;URL & Phishing</a>
+      <a href="/assets/pages/message-analysis.html">✉ &nbsp;Message Analysis</a>
+      <a href="/assets/pages/qr-analysis.html">▦ &nbsp;QR Security</a>
+      <a class="active" href="/assets/pages/auth-log-analysis.html">⌁ &nbsp;Login Anomalies</a>
+      <a href="/assets/pages/deepfake-analysis.html">◉ &nbsp;Media Validation</a>
+      <a href="/assets/pages/threats.html">⚠ &nbsp;Incident Records</a>
+    </nav>
+    <div class="sidebar-footer"><strong>DEMO MODE</strong>Authentication checks run on the sample events you submit.</div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar">
+      <div><h1>Authentication Anomaly Lab</h1><p>Investigate suspicious sign-in patterns with explainable rules.</p></div>
+      <span class="status-badge"><span class="status-dot"></span>Rule engine ready</span>
+    </header>
+    <section class="welcome-panel"><h2>Account takeover signal analysis</h2><p>Submit an authorized sample of login events. CyberGuard checks repeated failures, password-spraying patterns, unfamiliar devices or locations, and rapid location changes.</p></section>
+    <div class="lab-grid">
+      <section class="content-card">
+        <div class="section-heading"><div><h2>Authentication event sample</h2><p>Use JSON with an <code>events</code> array. Do not submit real user secrets.</p></div><span class="pill">SIMULATED INPUT</span></div>
+        <div class="sample-row"><button type="button" id="sample-spray">Load password spray</button><button type="button" id="sample-device">Load new device</button><button type="button" id="sample-normal">Load normal activity</button></div>
+        <div class="form-group"><label for="known-devices">Known devices (comma separated)</label><input id="known-devices" value="Chrome on Windows, Managed laptop"></div>
+        <div class="form-group"><label for="known-locations">Known locations (comma separated)</label><input id="known-locations" value="Kolkata, India"></div>
+        <div class="form-group"><label for="event-json">Login events (JSON)</label><textarea class="input-area" id="event-json" spellcheck="false"></textarea></div>
+        <button class="btn" type="button" id="analyze">Analyze sign-in events</button>
+        <p class="message" id="request-status" aria-live="polite">Sample loaded. Edit it or run the analysis.</p>
+      </section>
+      <section class="content-card" aria-live="polite">
+        <div class="section-heading"><div><h2>Assessment</h2><p>Findings include the exact rule signals used.</p></div><span class="pill" id="severity">AWAITING SCAN</span></div>
+        <div class="score-row"><div><div class="stat-label">Risk score</div><div class="score" id="score">—<small style="font-size:15px;color:var(--muted)"> / 100</small></div></div><div style="min-width:45%;flex:1"><div class="meter"><span id="meter-fill"></span></div></div></div>
+        <h3 id="category">No assessment yet</h3><p class="message" id="explanation">Run a sample to see a risk explanation.</p>
+        <h3 style="margin-top:22px">Evidence</h3><ul class="result-list" id="evidence"><li>Evidence will appear after analysis.</li></ul>
+        <h3 style="margin-top:22px">Recommended response</h3><div class="callout" id="action">Response guidance will appear here.</div>
+        <p class="message" id="disclaimer">Prototype rule assessment only. It is not connected to a live identity provider.</p>
+      </section>
+    </div>
+    <footer class="page-footer">CyberGuard · Authentication anomaly prototype · Use authorized or synthetic log data only.</footer>
+  </main>
+</div>
+<script>
+const samples={
+ spray:{events:[
+  {username:"alex.chen",source_ip:"198.51.100.42",device:"Unknown",location:"Unknown",success:false},
+  {username:"priya.s",source_ip:"198.51.100.42",device:"Unknown",location:"Unknown",success:false},
+  {username:"morgan.r",source_ip:"198.51.100.42",device:"Unknown",location:"Unknown",success:false},
+  {username:"dev.ops",source_ip:"198.51.100.42",device:"Unknown",location:"Unknown",success:false},
+  {username:"finance.team",source_ip:"198.51.100.42",device:"Unknown",location:"Unknown",success:false}]},
+ device:{events:[{username:"alex.chen",source_ip:"203.0.113.8",device:"New Android device",location:"Singapore",success:true,timestamp:new Date().toISOString()}]},
+ normal:{events:[{username:"alex.chen",source_ip:"192.0.2.10",device:"Chrome on Windows",location:"Kolkata, India",success:true,timestamp:new Date().toISOString()}]}
+};
+const area=document.getElementById("event-json");
+function setSample(key){area.value=JSON.stringify(samples[key],null,2)}
+document.getElementById("sample-spray").onclick=()=>setSample("spray");
+document.getElementById("sample-device").onclick=()=>setSample("device");
+document.getElementById("sample-normal").onclick=()=>setSample("normal");
+setSample("spray");
+function listFromInput(id){return document.getElementById(id).value.split(",").map(v=>v.trim()).filter(Boolean)}
+document.getElementById("analyze").addEventListener("click",async()=>{
+ const status=document.getElementById("request-status"), button=document.getElementById("analyze");
+ let sample; try{sample=JSON.parse(area.value)}catch{status.textContent="Invalid JSON. Check the event sample syntax.";return}
+ if(!Array.isArray(sample.events)||!sample.events.length){status.textContent="Add at least one event in the events array.";return}
+ const payload={...sample,known_devices:listFromInput("known-devices"),known_locations:listFromInput("known-locations")};
+ button.disabled=true;status.textContent="Analyzing sample…";
+ try{
+  const response=await fetch("/api/v1/auth-events",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const result=await response.json();if(!response.ok)throw new Error(result.detail||"Analysis request failed.");
+  const d=result.data;document.getElementById("score").firstChild.textContent=d.risk_score;
+  document.getElementById("meter-fill").style.width=`${d.risk_score}%`;
+  document.getElementById("severity").textContent=d.severity.toUpperCase();
+  document.getElementById("category").textContent=d.event_type.replaceAll("_"," ").toUpperCase();
+  document.getElementById("explanation").textContent=d.explanation;
+  document.getElementById("action").textContent=d.recommended_action;
+  document.getElementById("disclaimer").textContent=d.disclaimer;
+  const list=document.getElementById("evidence");list.replaceChildren();
+  for(const item of d.evidence){const li=document.createElement("li");li.textContent=item;list.append(li)}
+  status.textContent="Analysis complete · event recorded in the incident feed when database storage is available.";
+ }catch(error){status.textContent=error.message}finally{button.disabled=false}
+});
+</script>
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

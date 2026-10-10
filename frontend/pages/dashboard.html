@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d14">
+<title>Threat Operations Center | CyberGuard</title>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+:root{--bg:#080d14;--panel:#101923;--panel2:#131f2a;--line:rgba(132,160,169,.16);--mint:#b8f36b;--cyan:#51e0c1;--red:#ff7185;--amber:#ffca72;--blue:#78a8ff;--muted:#8fa5af}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf4f5;font-family:Inter,"Segoe UI",Arial,sans-serif}.shell{min-height:100vh;display:grid;grid-template-columns:236px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100vh;padding:22px 15px;border-right:1px solid var(--line);background:rgba(10,17,25,.94);display:flex;flex-direction:column;z-index:2}.brand{display:flex;align-items:center;gap:11px;padding:5px 10px 25px;font-size:19px;font-weight:750;letter-spacing:-.04em}.brand-mark{display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:linear-gradient(145deg,#c6f783,#51e0c1);color:#0b1715;font-size:18px;box-shadow:0 0 24px #51e0c126}.brand small{display:block;color:#8299a3;font-size:10px;font-weight:500;letter-spacing:.13em;margin-top:3px}.nav-caption{padding:18px 11px 8px;color:#657d88;font-size:9px;text-transform:uppercase;letter-spacing:.17em}.nav-link{display:flex;align-items:center;gap:12px;padding:11px 12px;margin:2px 0;border-radius:10px;border:1px solid transparent;text-decoration:none;color:#aabcc1;font-size:12px;transition:.18s}.nav-link:hover{color:#f1f7f2;background:#ffffff08}.nav-link.active{color:var(--mint);background:linear-gradient(100deg,#b8f36b16,#51e0c108);border-color:#b8f36b2a;box-shadow:inset 2px 0 var(--mint)}.nav-icon{width:17px;text-align:center;font-size:15px}.side-bottom{margin-top:auto;padding:12px;border:1px solid var(--line);border-radius:12px;background:#ffffff04}.side-bottom strong{display:block;font-size:11px}.side-bottom span{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:5px}.main{min-width:0;padding:24px clamp(18px,3vw,44px) 36px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:20px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--mint);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}.topbar h1{font-size:22px;margin:5px 0 0;letter-spacing:-.04em}.top-actions{display:flex;align-items:center;gap:10px}.health{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;padding:9px 12px;border:1px solid var(--line);border-radius:99px;background:#ffffff04}.dot{width:7px;height:7px;border-radius:50%;background:#fbbf24;box-shadow:0 0 12px currentColor}.dot.good{background:#68d9a3}.dot.bad{background:var(--red)}.button{cursor:pointer;border-radius:9px;padding:10px 13px;font-size:11px;font-weight:700;border:1px solid var(--line);color:#dce8e8;background:#18232c}.button.primary{color:#101813;border:0;background:linear-gradient(120deg,#c4f77d,#70dfb1)}.button:hover{filter:brightness(1.08);transform:translateY(-1px)}.intro{display:flex;align-items:center;justify-content:space-between;gap:25px;margin:21px 0;padding:24px 26px;border-radius:16px;border:1px solid #b8f36b25;background:radial-gradient(ellipse at 86% 0%,#51e0c114,transparent 34%),linear-gradient(120deg,#172526,#111c24 65%,#121b24);position:relative;overflow:hidden}.intro:after{content:"";position:absolute;width:200px;height:200px;right:2%;top:-110px;border:1px solid #b8f36b20;border-radius:50%;box-shadow:0 0 0 22px #b8f36b06,0 0 0 45px #51e0c105}.intro h2{font-size:21px;margin:0 0 8px;letter-spacing:-.04em}.intro p{color:#a6b9bd;font-size:12px;line-height:1.65;margin:0;max-width:670px}.intro-actions{display:flex;gap:8px;flex-wrap:wrap;z-index:1}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:25px 0 12px}.section-head h2{font-size:14px;margin:0}.section-head p{font-size:10px;color:var(--muted);margin:5px 0 0}.subtle{color:#718792;font-size:10px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric,.panel{min-width:0;border:1px solid var(--line);border-radius:13px;background:linear-gradient(155deg,#131f2a,#0f1821);box-shadow:0 12px 32px #0002}.metric{padding:16px 17px;position:relative;overflow:hidden}.metric:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;right:-28px;top:-34px;background:var(--glow,#51e0c1);opacity:.08;filter:blur(2px)}.metric-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px}.metric-icon{color:var(--tone,var(--cyan));font-size:15px}.metric-value{font-size:28px;font-weight:750;letter-spacing:-.05em;margin-top:14px}.metric-foot{color:#718792;font-size:9px;margin-top:5px}.tone-red{--tone:var(--red);--glow:var(--red)}.tone-amber{--tone:var(--amber);--glow:var(--amber)}.tone-blue{--tone:var(--blue);--glow:var(--blue)}.tone-mint{--tone:var(--mint);--glow:var(--mint)}.dash-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:13px;margin-top:13px}.panel{padding:16px 17px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}.panel-head h3{font-size:12px;margin:0}.panel-head p{font-size:9px;color:var(--muted);margin:5px 0 0}.panel-tag{font-size:9px;color:#8ea5ad;border:1px solid var(--line);padding:5px 8px;border-radius:20px;white-space:nowrap}.chart-wrap{height:205px;position:relative}.chart-wrap canvas{width:100%;height:100%;display:block}.severity-layout{display:flex;align-items:center;gap:23px;min-height:200px}.donut{width:155px;height:155px;flex:0 0 155px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#ff7185 0deg,#273640 0deg)}.donut-hole{display:grid;place-content:center;text-align:center;width:111px;height:111px;border-radius:50%;background:#111b24;border:1px solid var(--line)}.donut-hole strong{font-size:25px}.donut-hole span{font-size:9px;color:var(--muted);margin-top:3px}.legend{display:grid;gap:12px;flex:1}.legend-row{display:grid;grid-template-columns:8px 1fr auto;gap:8px;align-items:center;font-size:10px;color:#b4c5c8}.legend-dot{width:7px;height:7px;border-radius:50%;background:var(--c)}.legend-row strong{font-size:10px;color:#e9f0ef}.category-list{display:grid;gap:13px}.category-row{display:grid;grid-template-columns:110px minmax(40px,1fr) 28px;gap:10px;align-items:center;font-size:10px;color:#a9bbbf}.bar-track{height:7px;border-radius:9px;background:#ffffff0a;overflow:hidden}.bar-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,#56d9bd,#b8f36b)}.category-row strong{text-align:right;color:#e5efea;font-size:10px}.alerts-panel{margin-top:13px;overflow:hidden;padding:0}.alerts-head{padding:16px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.alerts-head h3{font-size:12px;margin:0}.alerts-head p{font-size:9px;color:var(--muted);margin:5px 0 0}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:690px;text-align:left}th,td{padding:12px 15px;border-bottom:1px solid #ffffff0c;font-size:10px}th{font-size:8px;color:#718792;text-transform:uppercase;letter-spacing:.12em;font-weight:650}td{color:#d8e3e3}tbody tr:hover{background:#ffffff05}.subject{max-width:360px;overflow:hidden;text-overflow:ellipsis}.subject strong{display:block;font-size:10px;font-weight:600}.subject small{display:block;color:#718792;margin-top:4px;font-size:9px}.badge{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:5px 8px;font-size:9px;white-space:nowrap}.badge:before{content:"";height:5px;width:5px;border-radius:50%;background:currentColor}.badge-high{color:#ff8997;background:#ff718514}.badge-medium{color:#ffd17b;background:#ffca7214}.badge-low{color:#7cdbab;background:#68d9a314}.badge-neutral{color:#a8bdc2;background:#91a7b214}.score{font-variant-numeric:tabular-nums;font-weight:700}.empty{padding:34px;text-align:center;color:var(--muted);font-size:11px;line-height:1.6}.footnote{color:#657c85;font-size:9px;line-height:1.6;margin:12px 2px}.error{color:#ff9aa6;background:#ff718510;padding:12px;margin:10px;border-radius:9px;font-size:10px}.filter{background:#111c24;border:1px solid var(--line);border-radius:8px;padding:7px 9px;color:#c5d5d7;font-size:9px}.filter:focus{outline:1px solid var(--mint)}.footer{padding-top:22px;text-align:center;color:#657c85;font-size:9px}
+@media(max-width:1050px){.shell{grid-template-columns:200px minmax(0,1fr)}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-grid{grid-template-columns:1fr}.severity-layout{justify-content:center}}
+@media(max-width:700px){.shell{display:block}.sidebar{position:relative;height:auto;padding:12px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:3px 8px 10px}.nav-caption,.side-bottom{display:none}.sidebar nav{display:flex;overflow-x:auto;gap:4px}.nav-link{white-space:nowrap;padding:9px;font-size:10px}.nav-icon{display:none}.main{padding:17px 13px 28px}.topbar{align-items:flex-start}.topbar h1{font-size:18px}.health{font-size:0;padding:10px}.health .dot{margin:0}.top-actions{gap:6px}.button{padding:9px;font-size:10px}.intro{align-items:flex-start;flex-direction:column;padding:19px}.intro h2{font-size:18px}.metrics{gap:8px}.metric{padding:13px}.metric-value{font-size:23px}.metric-foot{line-height:1.4}.section-head{margin-top:21px}.severity-layout{gap:13px}.donut{width:130px;height:130px;flex-basis:130px}.donut-hole{width:94px;height:94px}.legend{gap:9px}.chart-wrap{height:180px}}
+@media(max-width:370px){.metrics{grid-template-columns:1fr}.severity-layout{flex-direction:column}.legend{width:100%}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <a class="brand" href="/assets/pages/dashboard.html" style="text-decoration:none;color:inherit"><span class="brand-mark">✳</span><span>CYBERGUARD<small>THREAT OPERATIONS</small></span></a>
+  <div class="nav-caption">Workspace</div>
+  <nav>
+    <a class="nav-link active" href="/assets/pages/dashboard.html"><span class="nav-icon">◫</span>Overview</a>
+    <a class="nav-link" href="/assets/pages/threats.html"><span class="nav-icon">⌁</span>Threat feed</a>
+    <a class="nav-link" href="/assets/pages/url-analysis.html"><span class="nav-icon">↗</span>URL analysis</a>
+    <a class="nav-link" href="/assets/pages/message-analysis.html"><span class="nav-icon">✉</span>Message defense</a>
+    <a class="nav-link" href="/assets/pages/auth-log-analysis.html"><span class="nav-icon">⌑</span>Login anomalies</a>
+    <a class="nav-link" href="/assets/pages/qr-analysis.html"><span class="nav-icon">▦</span>QR inspection</a>
+    <a class="nav-link" href="/assets/pages/deepfake-analysis.html"><span class="nav-icon">◉</span>Media integrity</a>
+    <div class="nav-caption">Intelligence</div>
+    <a class="nav-link" href="/assets/pages/threat-dna.html"><span class="nav-icon">⟡</span>Threat DNA</a>
+    <a class="nav-link" href="/assets/pages/assistant.html"><span class="nav-icon">✧</span>AI security assistant</a>
+    <a class="nav-link" href="/assets/pages/architecture.html"><span class="nav-icon">⌘</span>Architecture &amp; evaluation</a>
+    <a class="nav-link" href="/docs" target="_blank" rel="noopener"><span class="nav-icon">⌘</span>API documentation</a>
+  </nav>
+  <div class="side-bottom"><strong>◉ &nbsp; Detection scope</strong><span>Dashboard metrics summarize records stored by your current prototype. No live network sensor is connected.</span></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div><div class="eyebrow">Security operations / overview</div><h1>Threat Operations Center</h1></div>
+    <div class="top-actions">
+      <div class="health"><span id="health-dot" class="dot"></span><span id="connection-status">Checking services…</span></div>
+      <button class="button" id="refresh-button" type="button" aria-label="Refresh dashboard">↻ <span class="refresh-label">Refresh</span></button>
+    </div>
+  </header>
+
+  <section class="intro">
+    <div><div class="eyebrow">CyberGuard intelligence</div><h2>One view across human and technical risk.</h2><p>Review phishing and URL findings alongside authentication anomalies. Each alert includes its risk level and detector explanation so the next action is clear.</p></div>
+    <div class="intro-actions"><a class="button primary" href="/assets/pages/url-analysis.html">＋ Analyze a URL</a><a class="button" href="/assets/pages/assistant.html">✧ Ask AI assistant</a></div>
+  </section>
+
+  <div class="section-head"><div><h2>Threat posture</h2><p>Counts reflect the current threat feed, up to the latest 50 stored records.</p></div><span class="subtle" id="updated-at">Waiting for data</span></div>
+  <section class="metrics" aria-label="Threat overview metrics">
+    <article class="metric tone-blue"><div class="metric-top"><span>Analyzed records</span><span class="metric-icon">◫</span></div><div class="metric-value" id="metric-total">—</div><div class="metric-foot">Latest records available in the feed</div></article>
+    <article class="metric tone-red"><div class="metric-top"><span>High / critical risk</span><span class="metric-icon">⬡</span></div><div class="metric-value" id="metric-high">—</div><div class="metric-foot">Requires prompt analyst review</div></article>
+    <article class="metric tone-amber"><div class="metric-top"><span>Phishing &amp; URL signals</span><span class="metric-icon">↗</span></div><div class="metric-value" id="metric-phishing">—</div><div class="metric-foot">URL and message threat records</div></article>
+    <article class="metric tone-mint"><div class="metric-top"><span>Account risk signals</span><span class="metric-icon">⌑</span></div><div class="metric-value" id="metric-auth">—</div><div class="metric-foot">Authentication anomaly records</div></article>
+  </section>
+
+  <div class="dash-grid">
+    <section class="panel">
+      <div class="panel-head"><div><h3>Threat activity</h3><p>Stored detections grouped by day</p></div><span class="panel-tag" id="activity-range">Last 14 days</span></div>
+      <div class="chart-wrap"><canvas id="activity-chart" role="img" aria-label="Threat activity trend chart"></canvas></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><div><h3>Severity distribution</h3><p>Risk levels in the current feed</p></div><span class="panel-tag">Current feed</span></div>
+      <div class="severity-layout"><div class="donut" id="severity-donut"><div class="donut-hole"><strong id="donut-total">—</strong><span>records</span></div></div><div class="legend" id="severity-legend"></div></div>
+    </section>
+  </div>
+
+  <div class="dash-grid">
+    <section class="panel">
+      <div class="panel-head"><div><h3>Detection categories</h3><p>Classification from stored analyzer results</p></div><span class="panel-tag">By category</span></div>
+      <div class="category-list" id="category-list"><div class="empty">Loading category data…</div></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><div><h3>Analyst guidance</h3><p>Response cues from recent findings</p></div><span class="panel-tag">Explainable results</span></div>
+      <div id="guidance" class="category-list"><div class="empty">Waiting for threat records…</div></div>
+    </section>
+  </div>
+
+  <section class="panel alerts-panel">
+    <div class="alerts-head"><div><h3>Recent threat findings</h3><p>Open a record to inspect its explanation and recommended response.</p></div><a class="button" href="/assets/pages/threats.html">Threat feed&nbsp; →</a></div>
+    <div class="table-wrap"><table><thead><tr><th>Finding</th><th>Category</th><th>Risk score</th><th>Severity</th><th>Detected</th></tr></thead><tbody id="recent-threats"><tr><td colspan="5" class="empty">Loading threat records…</td></tr></tbody></table></div>
+    <div id="threat-error" class="error" hidden></div>
+  </section>
+  <p class="footnote">Dashboard counts are derived from records returned by <code>/api/v1/threats</code>. Authentication events are sample-based; this prototype is not connected to live network telemetry or an identity provider.</p>
+  <footer class="footer">CYBERGUARD · explainable threat detection and response</footer>
+</main>
+</div>
+<script>
+const API_BASE="/api/v1";
+const COLORS={critical:"#ff7185",high:"#ff9b68",medium:"#ffca72",low:"#68d9a3",unknown:"#627784"};
+let currentRecords=[];
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("refresh-button").addEventListener("click",refreshDashboard);
+  window.addEventListener("resize",function(){drawActivity(currentRecords)});
+  refreshDashboard();
+});
+async function refreshDashboard(){
+  const button=document.getElementById("refresh-button");
+  button.disabled=true;
+  await Promise.all([checkBackend(),loadThreats()]);
+  button.disabled=false;
+}
+async function checkBackend(){
+  const status=document.getElementById("connection-status"),dot=document.getElementById("health-dot");
+  try{
+    const response=await fetch("/health");
+    if(!response.ok)throw new Error("Health check failed");
+    const result=await response.json();
+    if(result.status==="healthy"&&result.database==="disabled_public_demo"){status.textContent="Public demo · scans are not saved";dot.className="dot good"}
+    else if(result.status==="healthy"){status.textContent="Backend and database connected";dot.className="dot good"}
+    else{status.textContent="Backend connected · database degraded";dot.className="dot"}
+  }catch(error){status.textContent="Backend unavailable";dot.className="dot bad"}
+}
+async function loadThreats(){
+  const table=document.getElementById("recent-threats"),errorBox=document.getElementById("threat-error");
+  errorBox.hidden=true;
+  try{
+    const response=await fetch(API_BASE+"/threats");
+    if(!response.ok)throw new Error("Threat feed returned HTTP "+response.status);
+    const result=await response.json();
+    currentRecords=Array.isArray(result)?result:Array.isArray(result.data)?result.data:[];
+    renderDashboard(currentRecords);
+    document.getElementById("updated-at").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+  }catch(error){
+    table.innerHTML='<tr><td colspan="5" class="empty">Unable to load stored threat findings. Check the backend connection and refresh.</td></tr>';
+    errorBox.textContent=error.message;errorBox.hidden=false;
+    ["metric-total","metric-high","metric-phishing","metric-auth","donut-total"].forEach(function(id){document.getElementById(id).textContent="—"});
+    document.getElementById("severity-legend").innerHTML='<div class="empty">Severity data unavailable.</div>';
+    document.getElementById("category-list").innerHTML='<div class="empty">Category data unavailable.</div>';
+    document.getElementById("guidance").innerHTML='<div class="empty">Guidance unavailable until the threat feed responds.</div>';
+  }
+}
+function severityOf(record){return String(record.severity||record.risk_level||"unknown").toLowerCase()}
+function categoryOf(record){
+  const value=String(record.threat_type||record.event_type||record.source||"").toLowerCase();
+  if(value.includes("auth")||value.includes("login")||value.includes("password")||value.includes("account"))return "Account security";
+  if(value.includes("deepfake")||value.includes("media"))return "Media integrity";
+  if(value.includes("qr"))return "QR code risk";
+  if(value.includes("message")||value.includes("phish")||value.includes("url")||value.includes("web"))return "Phishing & URLs";
+  return "Other detections";
+}
+function renderDashboard(records){
+  const counts={critical:0,high:0,medium:0,low:0,unknown:0},categories={},highRisk=records.filter(function(r){return ["high","critical"].includes(severityOf(r))}).length;
+  records.forEach(function(record){const sev=severityOf(record);counts[Object.prototype.hasOwnProperty.call(counts,sev)?sev:"unknown"]++;const category=categoryOf(record);categories[category]=(categories[category]||0)+1});
+  document.getElementById("metric-total").textContent=records.length;
+  document.getElementById("metric-high").textContent=highRisk;
+  document.getElementById("metric-phishing").textContent=(categories["Phishing & URLs"]||0);
+  document.getElementById("metric-auth").textContent=(categories["Account security"]||0);
+  document.getElementById("donut-total").textContent=records.length;
+  renderSeverity(counts,records.length);
+  renderCategories(categories,records.length);
+  renderGuidance(records);
+  renderRecent(records);
+  drawActivity(records);
+}
+function renderSeverity(counts,total){
+  const order=["critical","high","medium","low","unknown"],names={critical:"Critical",high:"High",medium:"Medium",low:"Low",unknown:"Unclassified"};
+  let angle=0;const slices=[];
+  order.forEach(function(key){const degrees=total?counts[key]/total*360:0;slices.push(COLORS[key]+" "+angle+"deg "+(angle+degrees)+"deg");angle+=degrees});
+  if(!total)slices.splice(0,slices.length,"#263640 0deg 360deg");
+  document.getElementById("severity-donut").style.background="conic-gradient("+slices.join(",")+")";
+  const legend=document.getElementById("severity-legend");legend.replaceChildren();
+  order.forEach(function(key){const row=document.createElement("div");row.className="legend-row";row.innerHTML='<i class="legend-dot" style="--c:'+COLORS[key]+'"></i><span>'+names[key]+'</span><strong>'+counts[key]+'</strong>';legend.appendChild(row)});
+}
+function renderCategories(categories,total){
+  const container=document.getElementById("category-list"),entries=Object.entries(categories).sort(function(a,b){return b[1]-a[1]});
+  container.replaceChildren();
+  if(!entries.length){container.innerHTML='<div class="empty">No threat records yet. Run an analysis to populate this dashboard.</div>';return}
+  entries.forEach(function(entry){const row=document.createElement("div");row.className="category-row";const label=document.createElement("span");label.textContent=entry[0];const track=document.createElement("div");track.className="bar-track";const fill=document.createElement("div");fill.className="bar-fill";fill.style.width=Math.max(4,entry[1]/total*100)+"%";track.appendChild(fill);const count=document.createElement("strong");count.textContent=entry[1];row.append(label,track,count);container.appendChild(row)});
+}
+function renderGuidance(records){
+  const container=document.getElementById("guidance"),priority=records.filter(function(r){return ["high","critical"].includes(severityOf(r))}).slice(0,3);
+  container.replaceChildren();
+  if(!priority.length){container.innerHTML='<div class="empty">No high-risk records in the current feed. Continue reviewing new findings as they arrive.</div>';return}
+  priority.forEach(function(record){const row=document.createElement("div");row.style.cssText="padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#ffffff03";const title=document.createElement("strong");title.style.cssText="display:block;font-size:10px;margin-bottom:5px;color:#f0f5ef";title.textContent=categoryOf(record)+" · "+(record.domain||record.url||record.subject||"Threat finding");const action=document.createElement("span");action.style.cssText="display:block;color:var(--muted);font-size:9px;line-height:1.5";action.textContent=record.recommended_action||record.explanation||"Review the evidence and confirm the activity with the affected user.";row.append(title,action);container.appendChild(row)});
+}
+function renderRecent(records){
+  const table=document.getElementById("recent-threats");table.replaceChildren();
+  if(!records.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=5;td.className="empty";td.textContent="No threat records yet. Analyze a URL, message, QR code, or authorized login sample to see findings here.";tr.appendChild(td);table.appendChild(tr);return}
+  records.slice(0,8).forEach(function(record){
+    const tr=document.createElement("tr"),finding=document.createElement("td"),wrap=document.createElement("div"),strong=document.createElement("strong"),small=document.createElement("small"),category=document.createElement("td"),score=document.createElement("td"),severity=document.createElement("td"),date=document.createElement("td");
+    wrap.className="subject";strong.textContent=record.domain||record.url||record.subject||record.threat_type||"Security finding";small.textContent=record.explanation||record.threat_type||"Detection result recorded";wrap.append(strong,small);finding.appendChild(wrap);
+    category.textContent=categoryOf(record);score.className="score";score.textContent=record.risk_score==null?"—":String(record.risk_score)+"/100";
+    const level=severityOf(record),badge=document.createElement("span");badge.className="badge "+(["high","critical"].includes(level)?"badge-high":level==="medium"?"badge-medium":level==="low"?"badge-low":"badge-neutral");badge.textContent=level.charAt(0).toUpperCase()+level.slice(1);severity.appendChild(badge);
+    const time=record.created_at||record.timestamp||record.date;date.textContent=time?formatDate(time):"—";tr.append(finding,category,score,severity,date);table.appendChild(tr);
+  });
+}
+function drawActivity(records){
+  const canvas=document.getElementById("activity-chart"),ctx=canvas.getContext("2d"),rect=canvas.getBoundingClientRect(),ratio=window.devicePixelRatio||1;
+  if(!rect.width||!rect.height)return;canvas.width=rect.width*ratio;canvas.height=rect.height*ratio;ctx.scale(ratio,ratio);
+  const w=rect.width,h=rect.height,p={l:30,r:12,t:12,b:28},days=14,now=new Date(),labels=[],values=Array(days).fill(0);
+  for(let i=days-1;i>=0;i--){const d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()-i);labels.push(d);if(i===0)document.getElementById("activity-range").textContent="Last "+days+" days"}
+  records.forEach(function(record){const date=new Date(record.created_at||record.timestamp||record.date);if(Number.isNaN(date.getTime()))return;date.setHours(0,0,0,0);const diff=Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-date)/86400000);if(diff>=0&&diff<days)values[days-1-diff]++});
+  const max=Math.max(4,...values),plotW=w-p.l-p.r,plotH=h-p.t-p.b;
+  ctx.font="9px Segoe UI, sans-serif";ctx.textBaseline="middle";ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){const y=p.t+plotH*i/3;ctx.strokeStyle="rgba(143,165,175,.13)";ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.stroke();ctx.fillStyle="#718792";ctx.textAlign="right";ctx.fillText(String(Math.ceil(max*(3-i)/3)),p.l-7,y)}
+  const points=values.map(function(v,i){return{x:p.l+plotW*i/(days-1),y:p.t+plotH-(v/max)*plotH}});
+  const gradient=ctx.createLinearGradient(0,p.t,0,h-p.b);gradient.addColorStop(0,"rgba(81,224,193,.22)");gradient.addColorStop(1,"rgba(81,224,193,0)");
+  ctx.beginPath();ctx.moveTo(points[0].x,h-p.b);points.forEach(function(pt){ctx.lineTo(pt.x,pt.y)});ctx.lineTo(points[points.length-1].x,h-p.b);ctx.closePath();ctx.fillStyle=gradient;ctx.fill();
+  ctx.beginPath();points.forEach(function(pt,i){if(i===0)ctx.moveTo(pt.x,pt.y);else ctx.lineTo(pt.x,pt.y)});ctx.strokeStyle="#51e0c1";ctx.lineWidth=2;ctx.stroke();
+  points.forEach(function(pt,i){if(values[i]){ctx.beginPath();ctx.arc(pt.x,pt.y,3,0,Math.PI*2);ctx.fillStyle="#b8f36b";ctx.fill()}});
+  [0,3,6,9,13].forEach(function(i){const d=labels[i];ctx.fillStyle="#718792";ctx.textAlign=i===0?"left":i===13?"right":"center";ctx.fillText((d.getMonth()+1)+"/"+d.getDate(),points[i].x,h-10)});
+}
+function formatDate(value){const date=new Date(value);return Number.isNaN(date.getTime())?String(value):date.toLocaleString([],{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})}
+</script>
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+

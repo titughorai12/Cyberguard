@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d14">
+<title>Threat DNA · CyberGuard</title>
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/pages/soc-console.css">
+<style>
+.dna-form{max-width:900px}.field{margin:17px 0}.field label{display:block;margin-bottom:8px;font-size:12px;font-weight:650}.field input{width:100%;padding:13px 14px}.hint{font-size:10px;color:#8fa5af;line-height:1.6;margin-top:7px}.scan-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.scan-button{border:0;padding:11px 16px;font-size:11px;font-weight:750;cursor:pointer}.result-card{display:none;margin-top:16px;padding:19px}.result-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.result-top h2{font-size:15px;margin:0 0 6px}.domain{font-size:11px;color:#8fa5af;overflow-wrap:anywhere}.risk-chip{padding:7px 11px;border-radius:99px;background:#ffffff0a;font-size:10px;font-weight:750}.risk-chip.high{color:#ff8997;background:#ff718514}.risk-chip.medium{color:#ffd17b;background:#ffca7214}.risk-chip.low{color:#7cdbab;background:#68d9a314}.dna-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.dna-stat{padding:13px;border:1px solid rgba(132,160,169,.17);border-radius:10px;background:#ffffff03}.dna-stat span{display:block;color:#8fa5af;font-size:9px}.dna-stat strong{display:block;font-size:17px;margin-top:7px;overflow-wrap:anywhere}.hash{font:10px/1.6 ui-monospace,Consolas,monospace;word-break:break-all;color:#b8f36b!important}.result-section{margin-top:18px}.result-section h3{font-size:11px;margin-bottom:9px}.indicator-list{padding-left:18px;color:#b7c8c9;font-size:11px;line-height:1.8}.disclaimer{margin-top:17px;padding:11px;border-left:2px solid #ffca72;background:#ffca7208;color:#b9c5c3;font-size:10px;line-height:1.65}.status{font-size:10px;color:#8fa5af;margin-top:10px}.empty{color:#8fa5af;font-size:11px}@media(max-width:580px){.dna-stats{grid-template-columns:1fr}.result-card{padding:14px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-icon">C</div><div>CyberGuard<small>XAI Security Engine</small></div></div>
+  <div class="nav-title">Operations</div>
+  <nav>
+    <a class="nav-link" href="/assets/pages/dashboard.html">◫ &nbsp; SOC Dashboard</a>
+    <a class="nav-link" href="/assets/pages/url-analysis.html">↗ &nbsp; URL &amp; phishing</a>
+    <a class="nav-link" href="/assets/pages/message-analysis.html">✉ &nbsp; Message analysis</a>
+    <a class="nav-link" href="/assets/pages/qr-analysis.html">▦ &nbsp; QR security</a>
+    <a class="nav-link" href="/assets/pages/phone-analysis.html">☎ &nbsp; Phone risk</a>
+    <a class="nav-link" href="/assets/pages/deepfake-analysis.html">◉ &nbsp; Image metadata</a>
+    <a class="nav-link" href="/assets/pages/auth-log-analysis.html">⌁ &nbsp; Login anomalies</a>
+    <a class="nav-link active" href="/assets/pages/threat-dna.html">⟡ &nbsp; Threat DNA</a>
+    <a class="nav-link" href="/assets/pages/threats.html">⚠ &nbsp; Threat records</a>
+    <a class="nav-link" href="/assets/pages/assistant.html">✧ &nbsp; AI assistant</a>
+  </nav>
+  <div class="sidebar-footer">Threat DNA fingerprints are generated from the submitted URL and its rule-based indicators.</div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div><div class="eyebrow">Threat intelligence / fingerprinting</div><h1>Threat DNA analysis</h1><p class="muted">Inspect URL patterns and create a repeatable fingerprint for investigation.</p><div class="status" id="connection-status">Checking backend connection…</div></div>
+  </header>
+  <section class="welcome-panel"><h2>Build a URL threat fingerprint</h2><p>CyberGuard evaluates URL characteristics with configured rules, then returns a SHA-256 fingerprint that helps identify the same submitted URL in your investigation notes. The fingerprint is not proof of reputation or malicious activity.</p></section>
+  <section class="content-card dna-form">
+    <div class="section-heading"><div><h2>Analyze a website address</h2><p>Enter a URL or domain. Do not include passwords or private tokens.</p></div><span class="pill">RULE-BASED</span></div>
+    <form id="dna-form">
+      <div class="field"><label for="url-input">Website URL</label><input id="url-input" type="text" inputmode="url" placeholder="https://example.com/login" autocomplete="url" maxlength="2048" required><p class="hint">The backend checks URL patterns. It does not open the website or query a live reputation feed.</p></div>
+      <div class="scan-actions"><button class="scan-button" id="analyze-button" type="submit">Generate Threat DNA</button><a class="button button-secondary" href="/assets/pages/url-analysis.html">Open full URL analysis →</a></div>
+      <p class="status" id="request-status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="content-card result-card" id="result-card" aria-live="polite">
+    <div class="result-top"><div><h2>Fingerprint assessment</h2><div class="domain" id="result-domain"></div></div><span class="risk-chip" id="risk-chip"></span></div>
+    <div class="dna-stats">
+      <div class="dna-stat"><span>Pattern risk score</span><strong id="risk-score">—</strong></div>
+      <div class="dna-stat"><span>Indicators found</span><strong id="indicator-count">—</strong></div>
+      <div class="dna-stat"><span>SHA-256 URL fingerprint</span><strong class="hash" id="fingerprint">—</strong></div>
+    </div>
+    <div class="result-section"><h3>URL indicators</h3><ul class="indicator-list" id="indicators"><li>No indicators returned.</li></ul></div>
+    <div class="result-section"><h3>Warnings</h3><ul class="indicator-list" id="warnings"><li>No warnings returned.</li></ul></div>
+    <p class="disclaimer" id="disclaimer"></p>
+  </section>
+  <footer class="page-footer">CyberGuard · Threat DNA prototype · URL pattern analysis only</footer>
+</main>
+</div>
+<script>
+const form=document.getElementById("dna-form"),input=document.getElementById("url-input"),button=document.getElementById("analyze-button"),status=document.getElementById("request-status"),card=document.getElementById("result-card");
+async function checkHealth(){const el=document.getElementById("connection-status");try{const r=await fetch("/health");if(!r.ok)throw 0;const d=await r.json();el.textContent=d.database==="disabled_public_demo"?"● Public demo · scans are not saved":d.status==="healthy"?"● Backend and database connected":"● Backend connected · database degraded"}catch{el.textContent="● Backend unavailable"}}
+function fillList(id,items,emptyText){const list=document.getElementById(id);list.replaceChildren();const values=Array.isArray(items)?items:[];if(!values.length){const li=document.createElement("li");li.textContent=emptyText;list.appendChild(li);return}values.forEach(function(value){const li=document.createElement("li");li.textContent=String(value);list.appendChild(li)})}
+form.addEventListener("submit",async function(event){event.preventDefault();const url=input.value.trim();if(!url){status.textContent="Enter a URL to begin.";return}button.disabled=true;button.textContent="Analyzing…";status.textContent="Checking URL patterns and generating fingerprint…";card.style.display="none";try{const response=await fetch("/api/v1/threat-dna",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:url})});const result=await response.json().catch(function(){return {}});if(!response.ok||!result.success||!result.data)throw new Error(result.detail||result.message||"Threat DNA analysis failed.");const d=result.data,level=String(d.risk_level||"unknown").toLowerCase();document.getElementById("result-domain").textContent=d.domain||d.url||url;document.getElementById("risk-score").textContent=(d.risk_score??"—")+"/100";document.getElementById("indicator-count").textContent=d.indicator_count??(Array.isArray(d.indicators)?d.indicators.length:0);document.getElementById("fingerprint").textContent=d.fingerprint||"Not returned";const chip=document.getElementById("risk-chip");chip.textContent=level.toUpperCase()+" RISK";chip.className="risk-chip "+(["high","critical"].includes(level)?"high":level==="medium"?"medium":"low");fillList("indicators",d.indicators,"No URL pattern indicators were returned.");fillList("warnings",d.warnings,"No additional warnings were returned.");document.getElementById("disclaimer").textContent=d.disclaimer||"Rule-based URL pattern analysis does not confirm whether a website is malicious.";card.style.display="block";status.textContent="Analysis complete · rule-based URL pattern check."}catch(error){status.textContent=error.message}finally{button.disabled=false;button.textContent="Generate Threat DNA"}});
+checkHealth();
+</script>
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+

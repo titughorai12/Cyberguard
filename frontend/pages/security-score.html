@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Score | CyberGuard</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #0b1120;
+        color: #e5e7eb;
+        min-height: 100vh;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 245px;
+        flex-shrink: 0;
+        padding: 28px 18px;
+        background: #111827;
+        border-right: 1px solid #263247;
+    }
+
+    .brand {
+        color: #60a5fa;
+        font-size: 23px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .brand-subtitle {
+        color: #9ca3af;
+        font-size: 12px;
+        margin-bottom: 35px;
+    }
+
+    .nav-title {
+        color: #6b7280;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 20px 10px 12px;
+    }
+
+    .nav-link {
+        display: block;
+        color: #cbd5e1;
+        text-decoration: none;
+        padding: 13px 12px;
+        border-radius: 8px;
+        margin-bottom: 7px;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: #1e3a5f;
+        color: #93c5fd;
+    }
+
+    .main {
+        flex: 1;
+        min-width: 0;
+        padding: 30px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+        font-size: 27px;
+        margin-bottom: 8px;
+    }
+
+    .topbar p {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9ca3af;
+        background: #111827;
+        border: 1px solid #263247;
+        padding: 10px 13px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #f59e0b;
+        border-radius: 50%;
+    }
+
+    .status-dot.online {
+        background: #34d399;
+    }
+
+    .card {
+        background: #111827;
+        border: 1px solid #263247;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 22px;
+    }
+
+    .card h2 {
+        font-size: 19px;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 22px;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 9px;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        background: #0b1120;
+        color: #f9fafb;
+        border: 1px solid #374151;
+        border-radius: 8px;
+        padding: 13px 14px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #60a5fa;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .hint {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.6;
+        margin-top: 8px;
+    }
+
+    .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .primary-button {
+        background: #2563eb;
+        color: white;
+    }
+
+    .primary-button:hover {
+        background: #1d4ed8;
+    }
+
+    .secondary-button {
+        background: #263247;
+        color: #e5e7eb;
+    }
+
+    .secondary-button:hover {
+        background: #374151;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .message {
+        display: none;
+        margin-top: 18px;
+        padding: 13px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .message.error {
+        display: block;
+        color: #fecaca;
+        background: #451a1a;
+        border: 1px solid #7f1d1d;
+    }
+
+    .message.success {
+        display: block;
+        color: #a7f3d0;
+        background: #064e3b;
+        border: 1px solid #065f46;
+    }
+
+    .message.info {
+        display: block;
+        color: #bfdbfe;
+        background: #172554;
+        border: 1px solid #1e40af;
+    }
+
+    .score-card {
+        display: none;
+    }
+
+    .score-layout {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 28px;
+        align-items: center;
+        margin-top: 22px;
+    }
+
+    .score-circle {
+        width: 165px;
+        height: 165px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 8px solid #374151;
+        background: #0b1120;
+        margin: 0 auto;
+    }
+
+    .score-number {
+        font-size: 42px;
+        font-weight: bold;
+        color: #93c5fd;
+    }
+
+    .score-label {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 4px;
+    }
+
+    .score-details h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .score-details p {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .result-box {
+        background: #0b1120;
+        border: 1px solid #263247;
+        border-radius: 10px;
+        padding: 18px;
+        margin-top: 20px;
+        overflow-wrap: anywhere;
+    }
+
+    .result-box h3 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+
+    .result-box pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #cbd5e1;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .notice {
+        margin-top: 22px;
+        padding: 12px 14px;
+        border-left: 3px solid #f59e0b;
+        background: #1f1b12;
+        color: #9ca3af;
+        font-size: 12px;
+        line-height: 1.7;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .footer {
+        color: #6b7280;
+        font-size: 12px;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    @media (max-width: 800px) {
+        .layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #263247;
+            padding: 20px;
+        }
+
+        .brand-subtitle {
+            margin-bottom: 15px;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        .topbar h1 {
+            font-size: 23px;
+        }
+
+        .score-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+    <div class="brand">CyberGuard</div>
+    <div class="brand-subtitle">XAI Security Engine</div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <a class="nav-link" href="/assets/pages/dashboard.html">Dashboard</a>
+    <a class="nav-link" href="/assets/pages/assistant.html">AI Assistant</a>
+    <a class="nav-link" href="/assets/pages/message-analysis.html">Message Analysis</a>
+    <a class="nav-link" href="/assets/pages/phone-analysis.html">Phone Risk Check</a>
+    <a class="nav-link" href="/assets/pages/qr-analysis.html">QR Analysis</a>
+    <a class="nav-link" href="/assets/pages/deepfake-analysis.html">Media Validation</a>
+    <a class="nav-link active" href="/assets/pages/security-score.html">Security Score</a>
+
+    <div class="nav-title">Security</div>
+
+    <a class="nav-link" href="/assets/pages/threat-dna.html">Threat DNA</a>
+    <a class="nav-link" href="/docs" target="_blank" rel="noopener">API Documentation</a>
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <div>
+            <h1>Security Score</h1>
+            <p>Request a security score from the CyberGuard scoring engine.</p>
+        </div>
+
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="serverStatus">Checking server...</span>
+        </div>
+    </header>
+
+    <section class="card">
+        <h2>Calculate a Security Score</h2>
+
+        <p class="description">
+            Score a website URL with the same transparent URL-pattern rules used by the threat analyzer.
+        </p>
+
+        <form id="scoreForm">
+            <div class="input-group">
+                <label for="targetUrl">Website URL</label>
+
+                <input
+                    type="text"
+                    id="targetUrl"
+                    placeholder="https://example.com"
+                    autocomplete="url"
+                    required
+                >
+
+                <p class="hint">
+                    Include the full URL or a domain name, for example example.com.
+                </p>
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="primary-button" id="scoreButton">
+                    Calculate Score
+                </button>
+
+                <button type="button" class="secondary-button" id="clearButton">
+                    Clear
+                </button>
+            </div>
+
+            <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="notice">
+            <strong>Important:</strong> The score is only as reliable as the backend
+            logic and data sources. A score is not a guarantee that a website or
+            system is safe.
+        </div>
+    </section>
+
+    <section class="card score-card" id="scoreCard">
+        <h2>Scoring Result</h2>
+
+        <div class="score-layout">
+            <div class="score-circle" id="scoreCircle">
+                <div class="score-number" id="scoreNumber">--</div>
+                <div class="score-label">Security Score</div>
+            </div>
+
+            <div class="score-details">
+                <h3 id="scoreHeading">Backend Result</h3>
+                <p id="scoreDescription">
+                    The scoring response will appear here.
+                </p>
+            </div>
+        </div>
+
+        <div class="result-box">
+            <h3>Complete API Response</h3>
+            <pre id="resultOutput"></pre>
+        </div>
+    </section>
+
+    <div class="footer">
+        CyberGuard XAI Engine &mdash; Security Score
+    </div>
+</main>
+</div>
+
+<script>
+    const scoreForm = document.getElementById("scoreForm");
+    const targetUrl = document.getElementById("targetUrl");
+    const scoreButton = document.getElementById("scoreButton");
+    const clearButton = document.getElementById("clearButton");
+    const formMessage = document.getElementById("formMessage");
+    const scoreCard = document.getElementById("scoreCard");
+    const scoreNumber = document.getElementById("scoreNumber");
+    const scoreHeading = document.getElementById("scoreHeading");
+    const scoreDescription = document.getElementById("scoreDescription");
+    const scoreCircle = document.getElementById("scoreCircle");
+    const resultOutput = document.getElementById("resultOutput");
+    const serverStatus = document.getElementById("serverStatus");
+    const statusDot = document.getElementById("statusDot");
+
+    function showMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.className = "message " + type;
+    }
+
+    function clearMessage() {
+        formMessage.textContent = "";
+        formMessage.className = "message";
+    }
+
+    async function checkServer() {
+        try {
+            const response = await fetch("/health");
+
+            if (!response.ok) {
+                throw new Error("Health check failed");
+            }
+
+            serverStatus.textContent = "Server connected";
+            statusDot.classList.add("online");
+        } catch (error) {
+            serverStatus.textContent = "Server unavailable";
+            statusDot.classList.remove("online");
+        }
+    }
+
+    function findScore(data) {
+        if (!data || typeof data !== "object") {
+            return null;
+        }
+
+        const possibleKeys = [
+            "score",
+            "security_score",
+            "risk_score",
+            "overall_score"
+        ];
+
+        for (const key of possibleKeys) {
+            const value = data[key];
+
+            if (
+                typeof value === "number" &&
+                Number.isFinite(value) &&
+                value >= 0 &&
+                value <= 100
+            ) {
+                return value;
+            }
+        }
+
+        if (data.data && typeof data.data === "object") {
+            return findScore(data.data);
+        }
+
+        if (data.result && typeof data.result === "object") {
+            return findScore(data.result);
+        }
+
+        return null;
+    }
+
+    function showResult(result) {
+        scoreCard.style.display = "block";
+        const data = result.data || result;
+        const indicators = Array.isArray(data.indicators) ? data.indicators : [];
+        resultOutput.textContent = [
+            "Classification: " + (data.threat_type || "URL risk review"),
+            "Severity: " + (data.severity || "unknown"),
+            "Evidence: " + (indicators.length ? indicators.join("; ") : "No configured suspicious patterns found."),
+            "Recommended action: " + (data.recommended_action || "Verify the website independently before entering sensitive information."),
+            "Limitations: " + (data.disclaimer || "This is URL-pattern scoring, not a reputation verdict.")
+        ].join("\n\n");
+
+        const score = findScore(result);
+
+        if (score === null) {
+            scoreNumber.textContent = "--";
+            scoreHeading.textContent = "Response Received";
+            scoreDescription.textContent = data.explanation || "The API did not return a numeric score.";
+            scoreCircle.style.borderColor = "#374151";
+            return;
+        }
+
+        scoreNumber.textContent = Number.isInteger(score)
+            ? String(score)
+            : score.toFixed(1);
+
+        scoreHeading.textContent = (data.severity || "Unknown").toUpperCase() + " URL RISK";
+        scoreDescription.textContent = data.explanation ||
+            "Pattern-based URL risk score: " + score + "/100. This does not prove that a website is malicious.";
+
+        scoreCircle.style.borderColor = "#60a5fa";
+    }
+
+    scoreForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        clearMessage();
+
+        let url = targetUrl.value.trim();
+        if (!url) {
+            showMessage(
+                "Enter a website URL before calculating a score.",
+                "error"
+            );
+            return;
+        }
+
+        if (!/^https?:\/\//i.test(url)) {
+            url = "https://" + url;
+        }
+
+        if (url) {
+            try {
+                const parsedUrl = new URL(url);
+
+                if (
+                    parsedUrl.protocol !== "http:" &&
+                    parsedUrl.protocol !== "https:"
+                ) {
+                    showMessage("Please enter a valid HTTP or HTTPS website URL.", "error");
+                    return;
+                }
+            } catch (error) {
+                showMessage("Please enter a valid website URL.", "error");
+                return;
+            }
+        }
+
+        scoreButton.disabled = true;
+        scoreButton.textContent = "Calculating...";
+        scoreCard.style.display = "none";
+
+        try {
+            const payload = { url: url };
+
+            const response = await fetch("/api/v1/score", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const responseText = await response.text();
+
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                result = {
+                    response: responseText
+                };
+            }
+
+            showResult(result);
+
+            if (!response.ok) {
+                showMessage(
+                    result.detail || result.message || ("The API returned HTTP " + response.status + "."),
+                    "error"
+                );
+            } else {
+                showMessage(
+                    "URL scoring complete. Review its indicators and next step.",
+                    "info"
+                );
+            }
+        } catch (error) {
+            showMessage(
+                "Unable to connect to the scoring API. Make sure the FastAPI server is running.",
+                "error"
+            );
+        } finally {
+            scoreButton.disabled = false;
+            scoreButton.textContent = "Calculate Score";
+        }
+    });
+
+    clearButton.addEventListener("click", function () {
+        scoreForm.reset();
+        clearMessage();
+        scoreCard.style.display = "none";
+        scoreNumber.textContent = "--";
+        scoreHeading.textContent = "Backend Result";
+        scoreDescription.textContent = "The scoring response will appear here.";
+        scoreCircle.style.borderColor = "#374151";
+        resultOutput.textContent = "";
+    });
+
+    checkServer();
+</script>
+
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

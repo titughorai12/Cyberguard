@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d14">
+<title>Architecture &amp; Evaluation · CyberGuard</title>
+<link rel="stylesheet" href="/assets/theme.css"><link rel="stylesheet" href="/assets/pages/soc-console.css">
+<style>
+.arch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:14px 0}.arch-card{padding:17px;border:1px solid rgba(132,160,169,.17);border-radius:12px;background:linear-gradient(155deg,#131f2a,#0f1821)}.arch-card h3{font-size:12px;margin:0 0 9px}.arch-card p,.arch-card li{font-size:10px;line-height:1.7;color:#9aadb3}.arch-card ul{padding-left:17px}.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:14px}.flow-step{flex:1 1 130px;padding:12px;border:1px solid rgba(81,224,193,.2);border-radius:10px;background:#51e0c108}.flow-step strong{display:block;color:#dcebe4;font-size:10px}.flow-step span{display:block;color:#829ba2;font-size:9px;line-height:1.5;margin-top:5px}.section{margin-top:18px}.section h2{font-size:14px}.section>p{color:#8fa5af;font-size:10px;line-height:1.65}.table-scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:10px;border-bottom:1px solid #ffffff12;font-size:9px}th{color:#8fa5af;text-transform:uppercase;letter-spacing:.1em}td{color:#b6c6c8}.callout{padding:13px;border-left:2px solid #ffca72;background:#ffca7208;color:#c2c9c3;font-size:10px;line-height:1.7;border-radius:0 9px 9px 0}.status-pill{display:inline-block;padding:4px 8px;border-radius:99px;background:#ffca7214;color:#ffd17b;font-size:8px;letter-spacing:.08em;text-transform:uppercase}@media(max-width:700px){.arch-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+ <div class="brand"><div class="brand-icon">C</div><div>CyberGuard<small>XAI Security Engine</small></div></div>
+ <div class="nav-title">Operations</div><nav>
+ <a class="nav-link" href="/assets/pages/dashboard.html">◫ &nbsp; SOC dashboard</a>
+ <a class="nav-link" href="/assets/pages/url-analysis.html">↗ &nbsp; URL analysis</a>
+ <a class="nav-link" href="/assets/pages/message-analysis.html">✉ &nbsp; Message analysis</a>
+ <a class="nav-link" href="/assets/pages/qr-analysis.html">▦ &nbsp; QR analysis</a>
+ <a class="nav-link" href="/assets/pages/phone-analysis.html">☎ &nbsp; Phone review</a>
+ <a class="nav-link" href="/assets/pages/deepfake-analysis.html">◉ &nbsp; Image review</a>
+ <a class="nav-link" href="/assets/pages/auth-log-analysis.html">⌁ &nbsp; Login anomalies</a>
+ <a class="nav-link" href="/assets/pages/threat-dna.html">⟡ &nbsp; Threat DNA</a>
+ <a class="nav-link" href="/assets/pages/threats.html">⚠ &nbsp; Threat records</a>
+ <a class="nav-link" href="/assets/pages/assistant.html">✧ &nbsp; AI assistant</a>
+ <a class="nav-link active" href="/assets/pages/architecture.html">⌘ &nbsp; Architecture &amp; evaluation</a></nav>
+</aside>
+<main class="main">
+<header class="topbar"><div><div class="eyebrow">Project documentation / prototype scope</div><h1>System architecture &amp; evaluation</h1><p class="muted">What CyberGuard analyzes, how findings are scored, and which capabilities remain prototype-only.</p></div></header>
+<section class="welcome-panel"><h2>Detection to response, with evidence</h2><p>CyberGuard combines deterministic rules with optional Gemini assessments. Each completed analysis returns a category, risk score, explanation, evidence, and a recommended next step. The system recommends response actions; it does not automatically block users, URLs, or accounts.</p></section>
+<section class="section">
+<h2>Data flow</h2><p>Analysis requests are handled by FastAPI routes, assessed by the relevant detector, normalized into risk results, optionally saved, and displayed in the SOC dashboard.</p>
+<div class="flow">
+<div class="flow-step"><strong>1 · Submit</strong><span>URL, message text, decoded QR content, image, or authorized sample login events</span></div>
+<div class="flow-step"><strong>2 · Detect</strong><span>Rules plus optional Gemini text or visual assessment</span></div>
+<div class="flow-step"><strong>3 · Explain</strong><span>Risk category, score, indicators, confidence when available, and safe next steps</span></div>
+<div class="flow-step"><strong>4 · Record</strong><span>URL findings and supported security events stored in the configured database</span></div>
+<div class="flow-step"><strong>5 · Respond</strong><span>Analyst reviews findings and follows recommended containment or verification guidance</span></div>
+</div></section>
+<section class="section">
+<h2>Detection modules and algorithms</h2><div class="table-scroll"><table><thead><tr><th>Scenario</th><th>Current method</th><th>Output / limitation</th></tr></thead><tbody>
+<tr><td>Website / URL phishing</td><td>URL heuristics; optional Gemini text assessment; hybrid score</td><td>Domain, risk score, evidence, explanation, suggested response. Does not visit the site or query live reputation data.</td></tr>
+<tr><td>Message phishing / impersonation</td><td>Suspicious phrase and credential-request rules; trusted-role plus urgent payment/credential request signal; optional Gemini text assessment</td><td>Classification, risk, evidence, explanation, response guidance. Sender identity is not verified.</td></tr>
+<tr><td>QR phishing</td><td>Browser QR decoding when supported; server-side URL/content rules</td><td>Decoded destination and risk indicators. Destination is not opened.</td></tr>
+<tr><td>Account takeover signals</td><td>Authorized sample-log rules for repeated failures, password spray, unfamiliar device/location, and rapid location changes</td><td>Risk assessment and response recommendations. No live identity-provider connection.</td></tr>
+<tr><td>Image / media integrity</td><td>Optional Gemini multimodal visual screening when configured</td><td>Visible clues for human review. Not a validated forensic deepfake detector and cannot prove authenticity.</td></tr>
+<tr><td>Phone number</td><td>Regional numbering-format checks</td><td>Format plausibility only. Spam reputation, ownership, and reachability are not checked.</td></tr>
+</tbody></table></div></section>
+<section class="arch-grid">
+<article class="arch-card"><h3>Risk scoring</h3><ul>
+<li>URL rules add bounded weights for HTTP, IP hosts, deep subdomains, auth-related host keywords, selected TLDs, user-info syntax, long URLs, shorteners, and punycode.</li>
+<li>When Gemini is configured, the URL hybrid score is the greater of the rule score and a weighted AI/rule score (65% AI, 35% rules).</li>
+<li>Message rules use risk thresholds; login anomaly rules score the supplied sample; image scores are returned only after visual AI screening.</li>
+<li>Scores and thresholds are prototype heuristics, not calibrated probabilities.</li></ul></article>
+<article class="arch-card"><h3>Models and services</h3><ul>
+<li>Gemini model configured by <code>GEMINI_MODEL</code> provides optional text analysis and general-purpose visual review.</li>
+<li>Python URL and QR classifiers use transparent pattern rules; authentication analysis uses behavioral rules over the submitted events.</li>
+<li>SQLAlchemy persistence stores URL analyses and normalized security events when the database is available.</li>
+<li>Missing Gemini configuration falls back to rules or explicitly marks visual review unavailable.</li></ul></article>
+<article class="arch-card"><h3>Privacy and trust boundaries</h3><ul>
+<li>Do not submit real credentials, OTPs, API keys, or private identity data.</li>
+<li>For image AI screening, pixels are sent to the configured Gemini provider; this prototype does not store uploaded pixels.</li>
+<li>Message analysis evaluates text only and does not open links or verify senders.</li>
+<li>Login analysis uses only the authorized sample submitted by the analyst.</li></ul></article>
+<article class="arch-card"><h3>Deployment shape</h3><ul>
+<li>Frontend: static HTML/CSS/JavaScript served by FastAPI.</li>
+<li>API: FastAPI routes under <code>/api/v1</code>, with Pydantic request validation.</li>
+<li>Storage: configured PostgreSQL database via SQLAlchemy; database degradation is surfaced in health status.</li>
+<li>Scale path: deploy behind TLS and an API gateway, use managed secrets, add queue-based analysis and approved threat-intelligence/identity integrations, and retain evidence under a documented policy.</li></ul></article>
+</section>
+<section class="section"><h2>Evaluation status</h2><p>The repository does not contain a labeled, independently verified benchmark or measured accuracy results. Do not report an accuracy percentage until an evaluation has been run.</p>
+<div class="callout"><strong>Recommended evaluation:</strong> build a labeled, deduplicated test set for phishing URLs, benign URLs, scam/benign messages, QR destinations, authorized login anomalies, and manipulated/authentic images. Freeze the set before tuning. Report per-scenario precision, recall, F1, confusion matrix, false-positive rate, latency, model/config version, and sample count. For image screening, have multiple reviewers label the cases and measure reviewer agreement.</div></section>
+<footer class="page-footer">CyberGuard · Architecture and evaluation notes · Prototype scope is stated explicitly</footer>
+</main>
+</div>
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | URL Analysis</title>
+
+<style>
+    :root {
+        color-scheme: dark;
+        --bg: #080d18;
+        --sidebar: #0b1220;
+        --panel: #101827;
+        --panel2: #151f31;
+        --border: #25334a;
+        --text: #edf3ff;
+        --muted: #91a0b8;
+        --blue: #38bdf8;
+        --green: #34d399;
+        --red: #fb7185;
+        --yellow: #fbbf24;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button, input {
+        font: inherit;
+    }
+
+    .layout {
+        min-height: 100vh;
+        display: flex;
+    }
+
+    .sidebar {
+        width: 250px;
+        flex-shrink: 0;
+        padding: 28px 18px;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 40px;
+    }
+
+    .brand-icon {
+        width: 43px;
+        height: 43px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: #123047;
+        border: 1px solid #24516b;
+        color: var(--blue);
+        font-size: 23px;
+    }
+
+    .brand h2 {
+        font-size: 18px;
+    }
+
+    .brand p {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 1px;
+    }
+
+    .nav-title {
+        margin: 25px 10px 12px;
+        color: #71829d;
+        font-size: 11px;
+        font-weight: bold;
+        letter-spacing: 1.5px;
+    }
+
+    .nav-link {
+        display: block;
+        margin-bottom: 7px;
+        padding: 13px 14px;
+        border-radius: 9px;
+        color: #aab8ce;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .nav-link:hover {
+        background: var(--panel2);
+        color: white;
+    }
+
+    .nav-link.active {
+        color: var(--blue);
+        background: #122b40;
+        border: 1px solid #21455f;
+    }
+
+    .sidebar-status {
+        margin-top: 35px;
+        padding: 15px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--panel);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .main {
+        flex: 1;
+        min-width: 0;
+        padding: 30px 38px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .topbar h1 {
+        font-size: 25px;
+    }
+
+    .topbar p {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .badge {
+        padding: 9px 13px;
+        border: 1px solid #21455f;
+        border-radius: 20px;
+        background: #102438;
+        color: var(--blue);
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .content {
+        max-width: 1050px;
+        margin: 32px auto;
+    }
+
+    .intro {
+        margin-bottom: 25px;
+    }
+
+    .eyebrow {
+        margin-bottom: 12px;
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 1.7px;
+    }
+
+    .intro h2 {
+        margin-bottom: 12px;
+        font-size: 27px;
+    }
+
+    .intro p {
+        max-width: 700px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .scan-card {
+        padding: 27px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--panel);
+    }
+
+    .card-heading {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-bottom: 24px;
+    }
+
+    .icon-box {
+        width: 45px;
+        height: 45px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #24516b;
+        border-radius: 12px;
+        background: #102f43;
+        color: var(--blue);
+        font-size: 22px;
+    }
+
+    .card-heading h3 {
+        font-size: 17px;
+        margin-bottom: 5px;
+    }
+
+    .card-heading p {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 10px;
+        color: #dbe7f7;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 12px;
+    }
+
+    .url-input {
+        flex: 1;
+        min-width: 0;
+        padding: 15px 16px;
+        border: 1px solid #304159;
+        border-radius: 10px;
+        outline: none;
+        background: #0b1220;
+        color: var(--text);
+        font-size: 14px;
+    }
+
+    .url-input:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px #38bdf81a;
+    }
+
+    .url-input::placeholder {
+        color: #71829d;
+    }
+
+    .scan-button {
+        padding: 0 23px;
+        border: none;
+        border-radius: 10px;
+        background: #0284c7;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .scan-button:hover {
+        background: #0369a1;
+    }
+
+    .scan-button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .help-text {
+        margin-top: 12px;
+        color: #7f8da4;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .notice {
+        margin-top: 22px;
+        padding: 15px;
+        border: 1px solid #35415a;
+        border-radius: 10px;
+        background: #121b2b;
+        color: #aab8ce;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .result-card {
+        display: none;
+        margin-top: 25px;
+        padding: 25px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--panel);
+    }
+
+    .result-card.show {
+        display: block;
+    }
+
+    .result-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .result-heading h3 {
+        font-size: 18px;
+    }
+
+    .result-status {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--panel2);
+        color: var(--blue);
+        font-size: 12px;
+    }
+
+    .result-body {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #0b1220;
+        color: #d4dfef;
+        font-size: 13px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+    .result-body.error {
+        color: #fda4af;
+    }
+
+    .tips {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 25px;
+    }
+
+    .tip-card {
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        background: var(--panel);
+    }
+
+    .tip-card .tip-icon {
+        margin-bottom: 13px;
+        font-size: 22px;
+    }
+
+    .tip-card h4 {
+        margin-bottom: 9px;
+        font-size: 14px;
+    }
+
+    .tip-card p {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    @media (max-width: 950px) {
+        .sidebar {
+            width: 205px;
+        }
+
+        .main {
+            padding: 24px 20px;
+        }
+
+        .tips {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .sidebar {
+            width: 68px;
+            padding: 20px 8px;
+        }
+
+        .brand {
+            justify-content: center;
+        }
+
+        .brand-text,
+        .nav-title,
+        .nav-link span,
+        .sidebar-status {
+            display: none;
+        }
+
+        .nav-link {
+            padding: 13px 5px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .main {
+            padding: 20px 12px;
+        }
+
+        .topbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .topbar h1 {
+            font-size: 22px;
+        }
+
+        .intro h2 {
+            font-size: 23px;
+        }
+
+        .scan-card {
+            padding: 18px;
+        }
+
+        .input-row {
+            flex-direction: column;
+        }
+
+        .url-input {
+            width: 100%;
+        }
+
+        .scan-button {
+            min-height: 47px;
+        }
+    }
+</style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">🛡</div>
+                <div class="brand-text">
+                    <h2>CyberGuard</h2>
+                    <p>XAI SECURITY ENGINE</p>
+                </div>
+            </div>
+
+        <div class="nav-title">WORKSPACE</div>
+
+        <a class="nav-link" href="/assets/pages/dashboard.html">⌂ <span>Dashboard</span></a>
+        <a class="nav-link" href="/assets/pages/assistant.html">✦ <span>AI Assistant</span></a>
+        <a class="nav-link active" href="/assets/pages/url-analysis.html">⌕ <span>URL Analysis</span></a>
+        <a class="nav-link" href="/assets/pages/message-analysis.html">✉ <span>Message Analysis</span></a>
+        <a class="nav-link" href="/assets/pages/phone-analysis.html">☎ <span>Phone Risk Check</span></a>
+        <a class="nav-link" href="/assets/pages/qr-analysis.html">▦ <span>QR Analysis</span></a>
+        <a class="nav-link" href="/assets/pages/deepfake-analysis.html">◉ <span>Media Validation</span></a>
+        <a class="nav-link" href="/assets/pages/security-score.html">▤ <span>Security Score</span></a>
+        <a class="nav-link" href="/assets/pages/threats.html">⚠ <span>Threats</span></a>
+        <a class="nav-link" href="/assets/pages/threat-dna.html">⌘ <span>Threat DNA</span></a>
+
+        <div class="sidebar-status">
+            <span style="color:#34d399">●</span> Security workspace
+            <br>
+            CyberGuard XAI Engine
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>URL Security Analysis</h1>
+                <p>Analyze suspicious links and review the response from CyberGuard.</p>
+            </div>
+
+            <div class="badge">● URL Scanner</div>
+        </header>
+
+        <section class="content">
+            <div class="intro">
+                <div class="eyebrow">THREAT INTELLIGENCE</div>
+                <h2>Check a website before you trust it.</h2>
+                <p>
+                    Enter a website address to submit it to your CyberGuard
+                    analysis service. Review the returned results carefully
+                    before visiting an unfamiliar website.
+                </p>
+            </div>
+
+            <section class="scan-card">
+                <div class="card-heading">
+                    <div class="icon-box">⌕</div>
+                    <div>
+                        <h3>Website Scanner</h3>
+                        <p>Enter the complete URL you want to analyze.</p>
+                    </div>
+                </div>
+
+                <form id="url-form">
+                    <label class="field-label" for="url-input">Website URL</label>
+
+                    <div class="input-row">
+                        <input
+                            class="url-input"
+                            id="url-input"
+                            type="url"
+                            placeholder="https://example.com"
+                            autocomplete="url"
+                            required
+                        >
+
+                        <button class="scan-button" id="scan-button" type="submit">
+                            Analyze URL →
+                        </button>
+                    </div>
+
+                    <p class="help-text">
+                        Example: https://example.com
+                        <br>
+                        Enter a complete URL beginning with http:// or https://.
+                    </p>
+                </form>
+
+                <div class="notice">
+                    <strong>Safety notice:</strong>
+                    An analysis result cannot guarantee that a website is safe.
+                    Do not enter passwords, payment details, or confidential
+                    information on suspicious websites.
+                </div>
+            </section>
+
+            <section class="result-card" id="result-card" aria-live="polite">
+                <div class="result-heading">
+                    <h3>Analysis Results</h3>
+                    <span class="result-status" id="result-status">Result received</span>
+                </div>
+
+                <div class="result-body" id="result-body"></div>
+            </section>
+
+            <div class="tips">
+                <article class="tip-card">
+                    <div class="tip-icon">🔗</div>
+                    <h4>Inspect the URL</h4>
+                    <p>
+                        Look for misspellings, unusual domain names, and
+                        unexpected subdomains.
+                    </p>
+                </article>
+
+                <article class="tip-card">
+                    <div class="tip-icon">🛡️</div>
+                    <h4>Stay cautious</h4>
+                    <p>
+                        A padlock or HTTPS connection alone does not prove
+                        that a website is trustworthy.
+                    </p>
+                </article>
+
+                <article class="tip-card">
+                    <div class="tip-icon">🔍</div>
+                    <h4>Review the result</h4>
+                    <p>
+                        Read the analysis findings and verify important
+                        warnings before taking action.
+                    </p>
+                </article>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    const form = document.getElementById("url-form");
+    const urlInput = document.getElementById("url-input");
+    const scanButton = document.getElementById("scan-button");
+    const resultCard = document.getElementById("result-card");
+    const resultBody = document.getElementById("result-body");
+    const resultStatus = document.getElementById("result-status");
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const url = urlInput.value.trim();
+
+        if (!url) {
+            return;
+        }
+
+        resultCard.classList.add("show");
+        resultStatus.textContent = "Analyzing...";
+        resultBody.classList.remove("error");
+        resultBody.textContent = "Submitting the URL for analysis. Please wait.";
+
+        scanButton.disabled = true;
+        scanButton.textContent = "Analyzing...";
+
+        try {
+            const response = await fetch("/api/v1/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    url: url
+                })
+            });
+
+            const result = await response.json().catch(function () {
+                return {};
+            });
+
+            if (!response.ok) {
+                const detail = Array.isArray(result.detail)
+                    ? result.detail.map(function (item) {
+                        return item.msg || JSON.stringify(item);
+                    }).join("\n")
+                    : result.detail || result.message;
+
+                throw new Error(
+                    detail || "Request failed with HTTP " + response.status
+                );
+            }
+
+            const data = result.data || {};
+            const rule = data.rule_assessment || {};
+            const ai = data.ai_assessment || {};
+            resultStatus.textContent = (data.severity || "unknown").toUpperCase() + " RISK · " + (data.risk_score ?? "—") + "/100";
+            resultBody.textContent = [
+                "Target: " + (data.domain || data.url || url),
+                "Classification: " + (data.threat_type || "unclassified"),
+                "Risk: " + (data.severity || "unknown") + " · " + (data.risk_score ?? "—") + "/100",
+                "Detection mode: " + (data.analysis_type === "hybrid_rule_ai" ? "Gemini AI + URL rules" : "URL rules only"),
+                "Confidence: " + (data.confidence == null ? "not available" : data.confidence + "%"),
+                "Explanation: " + (data.explanation || ai.explanation || "No explanation returned."),
+                "Evidence: " + ((Array.isArray(data.evidence) && data.evidence.length) ? data.evidence.join("; ") : ((Array.isArray(rule.evidence) && rule.evidence.length) ? rule.evidence.join("; ") : "No configured indicators found.")),
+                "Recommended response: " + (data.recommended_action || "Verify the destination independently before sharing sensitive information."),
+                "Limitations: " + (data.disclaimer || "The analyzer does not visit the website or query a live reputation feed.")
+            ].join("\n\n");
+        } catch (error) {
+            resultStatus.textContent = "Analysis failed";
+            resultBody.classList.add("error");
+            resultBody.textContent =
+                "Unable to complete the URL analysis.\n\n" +
+                error.message +
+                "\n\nCheck that the backend is running and that the API is available.";
+        } finally {
+            scanButton.disabled = false;
+            scanButton.textContent = "Analyze URL →";
+        }
+    });
+</script>
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

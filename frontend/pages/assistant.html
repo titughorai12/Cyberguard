@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | AI Assistant</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        color-scheme: dark;
+        --background: #080d18;
+        --panel: #101827;
+        --panel-light: #151f31;
+        --border: #25334a;
+        --text: #edf3ff;
+        --muted: #91a0b8;
+        --accent: #38bdf8;
+        --green: #34d399;
+    }
+
+    body {
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--background);
+        color: var(--text);
+    }
+
+    button, textarea {
+        font: inherit;
+    }
+
+    .layout {
+        min-height: 100vh;
+        display: flex;
+    }
+
+    .sidebar {
+        width: 250px;
+        flex-shrink: 0;
+        padding: 28px 18px;
+        background: #0b1220;
+        border-right: 1px solid var(--border);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 42px;
+    }
+
+    .brand-icon {
+        width: 43px;
+        height: 43px;
+        display: grid;
+        place-items: center;
+        background: #123047;
+        color: var(--accent);
+        border: 1px solid #24516b;
+        border-radius: 12px;
+        font-size: 23px;
+    }
+
+    .brand h2 {
+        font-size: 18px;
+        letter-spacing: 0.5px;
+    }
+
+    .brand p {
+        margin-top: 5px;
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+    .nav-title {
+        color: #71829d;
+        font-size: 11px;
+        font-weight: bold;
+        letter-spacing: 1.5px;
+        margin: 25px 10px 12px;
+    }
+
+    .nav-link {
+        display: block;
+        padding: 13px 14px;
+        margin-bottom: 7px;
+        border-radius: 9px;
+        text-decoration: none;
+        color: #aab8ce;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .nav-link:hover {
+        background: var(--panel-light);
+        color: white;
+    }
+
+    .nav-link.active {
+        background: #122b40;
+        color: var(--accent);
+        border: 1px solid #21455f;
+    }
+
+    .sidebar-bottom {
+        margin-top: 45px;
+        padding: 15px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        border-radius: 12px;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        margin-right: 7px;
+    }
+
+    .sidebar-bottom p {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.8;
+    }
+
+    .main {
+        flex: 1;
+        min-width: 0;
+        padding: 30px 38px;
+    }
+
+    .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .topbar h1 {
+        font-size: 25px;
+    }
+
+    .topbar p {
+        color: var(--muted);
+        margin-top: 7px;
+        font-size: 13px;
+    }
+
+    .status-badge {
+        padding: 9px 13px;
+        border-radius: 20px;
+        background: #102c27;
+        border: 1px solid #205347;
+        color: var(--green);
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .content {
+        max-width: 1000px;
+        margin: 32px auto;
+    }
+
+    .welcome-card {
+        padding: 28px;
+        background: linear-gradient(125deg, #12243a, #101827 65%);
+        border: 1px solid #263c56;
+        border-radius: 16px;
+        margin-bottom: 25px;
+    }
+
+    .welcome-card .eyebrow {
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 1.7px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .welcome-card h2 {
+        font-size: 27px;
+        margin-bottom: 12px;
+    }
+
+    .welcome-card p {
+        max-width: 650px;
+        color: #a8b8cf;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .assistant-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .assistant-heading {
+        padding: 20px 23px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .bot-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: #102f43;
+        border: 1px solid #20516c;
+        color: var(--accent);
+        font-size: 22px;
+    }
+
+    .assistant-heading h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .assistant-heading p {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .chat-area {
+        min-height: 290px;
+        max-height: 430px;
+        overflow-y: auto;
+        padding: 24px;
+    }
+
+    .message {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 22px;
+        align-items: flex-start;
+    }
+
+    .message.user {
+        flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: #183147;
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .user .message-avatar {
+        background: #26314a;
+        color: #c4b5fd;
+    }
+
+    .message-bubble {
+        max-width: 82%;
+        padding: 13px 16px;
+        border: 1px solid var(--border);
+        border-radius: 4px 13px 13px 13px;
+        background: var(--panel-light);
+        color: #d8e3f5;
+        font-size: 14px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+    .user .message-bubble {
+        background: #102d43;
+        border-color: #234b65;
+        border-radius: 13px 4px 13px 13px;
+    }
+
+    .input-area {
+        padding: 20px;
+        border-top: 1px solid var(--border);
+        background: #0d1523;
+    }
+
+    .input-box {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        padding: 10px;
+        background: #101827;
+        border: 1px solid #304159;
+        border-radius: 13px;
+    }
+
+    textarea {
+        width: 100%;
+        min-height: 48px;
+        max-height: 140px;
+        resize: vertical;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        padding: 12px;
+        line-height: 1.6;
+    }
+
+    textarea::placeholder {
+        color: #75849c;
+    }
+
+    .send-button {
+        padding: 13px 19px;
+        border: none;
+        border-radius: 9px;
+        background: #0284c7;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .send-button:hover {
+        background: #0369a1;
+    }
+
+    .send-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .input-note {
+        color: #75849c;
+        font-size: 11px;
+        margin: 12px 4px 0;
+    }
+
+    .quick-prompts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 0 0 18px;
+    }
+
+    .quick-prompt {
+        background: #101827;
+        color: #b9c9df;
+        border: 1px solid var(--border);
+        padding: 10px 13px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .quick-prompt:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .error-text {
+        color: #fca5a5;
+    }
+
+    @media (max-width: 800px) {
+        .sidebar {
+            width: 75px;
+            padding: 20px 10px;
+        }
+
+        .brand {
+            justify-content: center;
+        }
+
+        .brand-text,
+        .nav-title,
+        .nav-link span,
+        .sidebar-bottom {
+            display: none;
+        }
+
+        .nav-link {
+            text-align: center;
+            padding: 14px 5px;
+            font-size: 18px;
+        }
+
+        .main {
+            padding: 22px 15px;
+        }
+
+        .welcome-card {
+            padding: 22px;
+        }
+
+        .welcome-card h2 {
+            font-size: 22px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .topbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .topbar h1 {
+            font-size: 22px;
+        }
+
+        .chat-area {
+            padding: 15px;
+        }
+
+        .input-area {
+            padding: 12px;
+        }
+
+        .input-box {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .send-button {
+            width: 100%;
+        }
+
+        .message-bubble {
+            max-width: 90%;
+        }
+    }
+</style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">🛡</div>
+                <div class="brand-text">
+                    <h2>CyberGuard</h2>
+                    <p>XAI SECURITY ENGINE</p>
+                </div>
+            </div>
+
+        <div class="nav-title">WORKSPACE</div>
+
+        <a class="nav-link" href="/assets/pages/dashboard.html">⌂ <span>Dashboard</span></a>
+        <a class="nav-link active" href="/assets/pages/assistant.html">✦ <span>AI Assistant</span></a>
+        <a class="nav-link" href="/assets/pages/url-analysis.html">⌕ <span>URL Analysis</span></a>
+        <a class="nav-link" href="/assets/pages/message-analysis.html">✉ <span>Message Analysis</span></a>
+        <a class="nav-link" href="/assets/pages/phone-analysis.html">☎ <span>Phone Risk Check</span></a>
+        <a class="nav-link" href="/assets/pages/qr-analysis.html">▦ <span>QR Analysis</span></a>
+        <a class="nav-link" href="/assets/pages/deepfake-analysis.html">◉ <span>Media Validation</span></a>
+        <a class="nav-link" href="/assets/pages/security-score.html">▤ <span>Security Score</span></a>
+        <a class="nav-link" href="/assets/pages/threats.html">⚠ <span>Threats</span></a>
+        <a class="nav-link" href="/assets/pages/threat-dna.html">⌘ <span>Threat DNA</span></a>
+
+        <div class="sidebar-bottom">
+            <p><span class="status-dot"></span>Security workspace</p>
+            <p>CyberGuard XAI Engine</p>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>AI Security Assistant</h1>
+                <p>Your assistant for cybersecurity questions and threat guidance.</p>
+            </div>
+
+            <div class="status-badge">● Assistant Ready</div>
+        </header>
+
+        <section class="content">
+            <div class="welcome-card">
+                <div class="eyebrow">CYBERGUARD INTELLIGENCE</div>
+                <h2>How can I help secure your digital world?</h2>
+                <p>
+                    Ask questions about suspicious links, phishing messages,
+                    online scams, digital safety, or cybersecurity best practices.
+                    I will help you understand potential risks.
+                </p>
+            </div>
+
+            <div class="quick-prompts">
+                <button class="quick-prompt" data-prompt="How can I identify a phishing message?">
+                    Identify phishing
+                </button>
+                <button class="quick-prompt" data-prompt="How can I check whether a website is suspicious?">
+                    Check suspicious websites
+                </button>
+                <button class="quick-prompt" data-prompt="I clicked a suspicious link. Give me the safest immediate steps to protect my account and device.">
+                    I clicked a suspicious link
+                </button>
+                <button class="quick-prompt" data-prompt="I see a login I do not recognize. What should I do first, and how do I secure the account?">
+                    Unknown account login
+                </button>
+                <button class="quick-prompt" data-prompt="How can I check a message that claims to be from my bank without clicking its link?">
+                    Check a bank message
+                </button>
+            </div>
+
+            <section class="assistant-card">
+                <div class="assistant-heading">
+                    <div class="bot-icon">✦</div>
+                    <div>
+                        <h3>CyberGuard AI</h3>
+                        <p>Cybersecurity assistance</p>
+                    </div>
+                </div>
+
+                <div class="chat-area" id="chat-area" aria-live="polite">
+                    <div class="message">
+                        <div class="message-avatar">AI</div>
+                        <div class="message-bubble">
+                            Hello! I'm your CyberGuard AI Assistant. Ask me a cybersecurity question, and I'll turn it into clear, practical next steps.
+                        </div>
+                    </div>
+                </div>
+
+                <form class="input-area" id="chat-form">
+                    <div class="input-box">
+                        <textarea
+                            id="message-input"
+                            placeholder="Ask a cybersecurity question..."
+                            aria-label="Your message"
+                            required
+                        ></textarea>
+                        <button class="send-button" id="send-button" type="submit">
+                            Send ➤
+                        </button>
+                    </div>
+                    <p class="input-note">
+                        Do not share passwords, verification codes, or other sensitive information. AI answers require Gemini to be configured by the site operator and can be wrong; verify urgent requests through a trusted contact channel.
+                    </p>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script>
+    const chatArea = document.getElementById("chat-area");
+    const chatForm = document.getElementById("chat-form");
+    const messageInput = document.getElementById("message-input");
+    const sendButton = document.getElementById("send-button");
+
+    function addMessage(text, sender, isError = false) {
+        const message = document.createElement("div");
+        message.className = "message " + sender;
+
+        const avatar = document.createElement("div");
+        avatar.className = "message-avatar";
+        avatar.textContent = sender === "user" ? "YOU" : "AI";
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+
+        if (isError) {
+            bubble.classList.add("error-text");
+        }
+
+        bubble.textContent = text;
+
+        message.appendChild(avatar);
+        message.appendChild(bubble);
+        chatArea.appendChild(message);
+
+        chatArea.scrollTop = chatArea.scrollHeight;
+        return bubble;
+    }
+
+    function getReplyText(result) {
+        if (typeof result === "string") {
+            return result;
+        }
+
+        if (result && typeof result === "object") {
+            const data = result.data;
+
+            if (typeof data === "string") {
+                return data;
+            }
+
+            if (data && typeof data === "object") {
+                return (
+                    data.answer ||
+                    data.response ||
+                    data.reply ||
+                    data.message ||
+                    JSON.stringify(data, null, 2)
+                );
+            }
+
+            return (
+                result.answer ||
+                result.response ||
+                result.reply ||
+                result.message ||
+                JSON.stringify(result, null, 2)
+            );
+        }
+
+        return "The server returned an empty response.";
+    }
+
+    function formatAssistantReply(result) {
+        const data = result && result.data && typeof result.data === "object"
+            ? result.data
+            : result;
+        const answer = data.answer || data.response || data.reply || data.message || "";
+        const steps = Array.isArray(data.steps) ? data.steps : [];
+        const action = data.recommended_action || "";
+        const sections = [answer];
+        if (steps.length) {
+            sections.push("Suggested steps:\n" + steps.map((step, index) => `${index + 1}. ${step}`).join("\n"));
+        }
+        if (action) sections.push("Recommended next action: " + action);
+        return sections.filter(Boolean).join("\n\n") || JSON.stringify(data, null, 2);
+    }
+    async function sendMessage(text) {
+        const message = text.trim();
+
+        if (!message) {
+            return;
+        }
+
+        addMessage(message, "user");
+        messageInput.value = "";
+        sendButton.disabled = true;
+        sendButton.textContent = "Thinking...";
+
+        const loadingBubble = addMessage("Analyzing your question...", "assistant");
+
+        try {
+            const response = await fetch("/api/v1/assistant", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    question: message
+                })
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    result.detail ||
+                    result.message ||
+                    "The assistant request failed. HTTP " + response.status
+                );
+            }
+
+            loadingBubble.textContent = formatAssistantReply(result);
+        } catch (error) {
+            loadingBubble.textContent =
+                "Unable to get a response from the AI assistant. " +
+                "Check that the backend is running and the assistant API is available. " +
+                "Details: " + error.message;
+
+            loadingBubble.classList.add("error-text");
+        } finally {
+            sendButton.disabled = false;
+            sendButton.textContent = "Send ➤";
+            messageInput.focus();
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+    }
+
+    chatForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        sendMessage(messageInput.value);
+    });
+
+    document.querySelectorAll(".quick-prompt").forEach(function (button) {
+        button.addEventListener("click", function () {
+            sendMessage(button.dataset.prompt);
+        });
+    });
+
+    messageInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            chatForm.requestSubmit();
+        }
+    });
+</script>
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

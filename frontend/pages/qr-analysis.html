@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Analysis | CyberGuard</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #0b1120;
+        color: #e5e7eb;
+        min-height: 100vh;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 245px;
+        background: #111827;
+        border-right: 1px solid #263247;
+        padding: 28px 18px;
+        flex-shrink: 0;
+    }
+
+    .brand {
+        font-size: 23px;
+        font-weight: bold;
+        color: #60a5fa;
+        margin-bottom: 8px;
+    }
+
+    .brand-subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 35px;
+    }
+
+    .nav-title {
+        color: #6b7280;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 20px 10px 12px;
+    }
+
+    .nav-link {
+        display: block;
+        text-decoration: none;
+        color: #cbd5e1;
+        padding: 13px 12px;
+        border-radius: 8px;
+        margin-bottom: 7px;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: #1e3a5f;
+        color: #93c5fd;
+    }
+
+    .main {
+        flex: 1;
+        padding: 30px;
+        min-width: 0;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+        font-size: 27px;
+        margin-bottom: 7px;
+    }
+
+    .topbar p {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #9ca3af;
+        background: #111827;
+        border: 1px solid #263247;
+        padding: 10px 13px;
+        border-radius: 20px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #f59e0b;
+        border-radius: 50%;
+    }
+
+    .status-dot.online {
+        background: #34d399;
+    }
+
+    .card {
+        background: #111827;
+        border: 1px solid #263247;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 22px;
+    }
+
+    .card h2 {
+        font-size: 19px;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 22px;
+    }
+
+    .upload-area {
+        border: 2px dashed #374151;
+        border-radius: 12px;
+        padding: 35px 20px;
+        text-align: center;
+        background: #0b1120;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .upload-area:hover,
+    .upload-area.dragover {
+        border-color: #60a5fa;
+        background: #101c31;
+    }
+
+    .upload-icon {
+        font-size: 40px;
+        margin-bottom: 14px;
+    }
+
+    .upload-area h3 {
+        font-size: 16px;
+        margin-bottom: 9px;
+    }
+
+    .upload-area p {
+        font-size: 13px;
+        color: #9ca3af;
+        line-height: 1.7;
+    }
+
+    .browse-text {
+        color: #60a5fa;
+        font-weight: bold;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .preview-container {
+        display: none;
+        margin-top: 22px;
+        text-align: center;
+    }
+
+    .preview-container h3 {
+        font-size: 14px;
+        margin-bottom: 12px;
+        text-align: left;
+    }
+
+    #qrPreview {
+        max-width: 100%;
+        max-height: 280px;
+        object-fit: contain;
+        border: 1px solid #374151;
+        border-radius: 10px;
+        padding: 8px;
+        background: #ffffff;
+    }
+
+    .file-info {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 10px;
+        overflow-wrap: anywhere;
+    }
+
+    .button-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .primary-button {
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .primary-button:hover {
+        background: #1d4ed8;
+    }
+
+    .secondary-button {
+        background: #263247;
+        color: #e5e7eb;
+    }
+
+    .secondary-button:hover {
+        background: #374151;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .message {
+        display: none;
+        margin-top: 18px;
+        padding: 13px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .message.error {
+        display: block;
+        background: #451a1a;
+        border: 1px solid #7f1d1d;
+        color: #fecaca;
+    }
+
+    .message.success {
+        display: block;
+        background: #064e3b;
+        border: 1px solid #065f46;
+        color: #a7f3d0;
+    }
+
+    .message.info {
+        display: block;
+        background: #172554;
+        border: 1px solid #1e40af;
+        color: #bfdbfe;
+    }
+
+    .result-card {
+        display: none;
+    }
+
+    .result-box {
+        background: #0b1120;
+        border: 1px solid #263247;
+        border-radius: 10px;
+        padding: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .result-box pre {
+        color: #cbd5e1;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .notice {
+        font-size: 12px;
+        line-height: 1.7;
+        color: #9ca3af;
+        border-left: 3px solid #f59e0b;
+        padding: 12px 14px;
+        margin-top: 22px;
+        background: #1f1b12;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .footer {
+        color: #6b7280;
+        font-size: 12px;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    @media (max-width: 800px) {
+        .layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #263247;
+            padding: 20px;
+        }
+
+        .brand-subtitle {
+            margin-bottom: 15px;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        .topbar h1 {
+            font-size: 23px;
+        }
+    }
+</style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+    <div class="brand">CyberGuard</div>
+    <div class="brand-subtitle">XAI Security Engine</div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <a class="nav-link" href="/assets/pages/dashboard.html">Dashboard</a>
+    <a class="nav-link" href="/assets/pages/assistant.html">AI Assistant</a>
+    <a class="nav-link" href="/assets/pages/message-analysis.html">Message Analysis</a>
+    <a class="nav-link" href="/assets/pages/phone-analysis.html">Phone Risk Check</a>
+    <a class="nav-link" href="/assets/pages/qr-analysis.html">QR Analysis</a>
+    <a class="nav-link" href="/assets/pages/deepfake-analysis.html">Media Validation</a>
+
+    <div class="nav-title">Security</div>
+
+    <a class="nav-link" href="/assets/pages/threat-dna.html">Threat DNA</a>
+    <a class="nav-link" href="/docs" target="_blank" rel="noopener">API Documentation</a>
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <div>
+            <h1>QR Code Analysis</h1>
+            <p>Inspect QR codes for potentially suspicious destinations.</p>
+        </div>
+
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="serverStatus">Checking server...</span>
+        </div>
+    </header>
+
+    <section class="card">
+        <h2>Upload a QR Code</h2>
+
+        <p class="description">
+            Decode a QR image in your browser when supported, or paste decoded content below. The backend screens the resulting text or URL for suspicious patterns.
+        </p>
+
+        <form id="qrForm">
+            <div class="upload-area" id="uploadArea" tabindex="0" role="button"
+                 aria-label="Choose a QR code image">
+                <div class="upload-icon">▦</div>
+                <h3>Drag and drop your QR image here</h3>
+                <p>
+                    or <span class="browse-text">browse files</span><br>
+                    Supported image formats: PNG, JPG, JPEG, WEBP
+                </p>
+            </div>
+
+            <input
+                type="file"
+                id="qrFile"
+                name="file"
+                accept="image/png,image/jpeg,image/webp"
+            >
+
+            <div class="preview-container" id="previewContainer">
+                <h3>Image Preview</h3>
+                <img id="qrPreview" alt="Selected QR code preview">
+                <div class="file-info" id="fileInfo"></div>
+            </div>
+
+            <label for="qrContent" style="display:block;margin:16px 0 7px">Decoded QR content (optional fallback)</label>
+            <textarea id="qrContent" rows="3" maxlength="4096" placeholder="Paste the text or URL encoded in the QR code if browser decoding is unavailable"></textarea>
+
+            <div class="button-row">
+                <button class="primary-button" id="analyzeButton" type="submit">
+                    Analyze QR Code
+                </button>
+
+                <button class="secondary-button" id="clearButton" type="button">
+                    Clear
+                </button>
+            </div>
+
+            <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="notice">
+            <strong>Safety tip:</strong> Do not open an unknown QR destination directly. Image decoding uses your browser's built-in detector where available; the image itself stays in your browser. CyberGuard analyzes only decoded text, and pattern checks cannot prove a site is safe.
+        </div>
+    </section>
+
+    <section class="card result-card" id="resultCard">
+        <h2>Analysis Response</h2>
+
+        <div class="result-box">
+            <pre id="resultOutput"></pre>
+        </div>
+    </section>
+
+    <div class="footer">
+        CyberGuard XAI Engine &mdash; QR Analysis
+    </div>
+</main>
+</div>
+
+<script>
+    const qrForm = document.getElementById("qrForm");
+    const uploadArea = document.getElementById("uploadArea");
+    const qrFile = document.getElementById("qrFile");
+    const qrContent = document.getElementById("qrContent");
+    const qrPreview = document.getElementById("qrPreview");
+    const previewContainer = document.getElementById("previewContainer");
+    const fileInfo = document.getElementById("fileInfo");
+    const analyzeButton = document.getElementById("analyzeButton");
+    const clearButton = document.getElementById("clearButton");
+    const formMessage = document.getElementById("formMessage");
+    const resultCard = document.getElementById("resultCard");
+    const resultOutput = document.getElementById("resultOutput");
+    const serverStatus = document.getElementById("serverStatus");
+    const statusDot = document.getElementById("statusDot");
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    function showMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.className = "message " + type;
+    }
+
+    function clearMessage() {
+        formMessage.textContent = "";
+        formMessage.className = "message";
+    }
+
+    function isAllowedImage(file) {
+        const allowedTypes = [
+            "image/png",
+            "image/jpeg",
+            "image/webp"
+        ];
+
+        return allowedTypes.includes(file.type);
+    }
+
+    function displayFile(file) {
+        clearMessage();
+
+        if (!file) {
+            return;
+        }
+
+        if (!isAllowedImage(file)) {
+            qrFile.value = "";
+            previewContainer.style.display = "none";
+            showMessage(
+                "Please select a PNG, JPG, JPEG, or WEBP image.",
+                "error"
+            );
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            qrFile.value = "";
+            previewContainer.style.display = "none";
+            showMessage("The image must be smaller than 10 MB.", "error");
+            return;
+        }
+
+        const imageUrl = URL.createObjectURL(file);
+
+        qrPreview.onload = function () {
+            URL.revokeObjectURL(imageUrl);
+        };
+
+        qrPreview.src = imageUrl;
+        fileInfo.textContent =
+            file.name + " | " + (file.size / 1024).toFixed(1) + " KB";
+
+        previewContainer.style.display = "block";
+    }
+
+    uploadArea.addEventListener("click", function () {
+        qrFile.click();
+    });
+
+    uploadArea.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            qrFile.click();
+        }
+    });
+
+    qrFile.addEventListener("change", function () {
+        displayFile(qrFile.files[0]);
+    });
+
+    uploadArea.addEventListener("dragover", function (event) {
+        event.preventDefault();
+        uploadArea.classList.add("dragover");
+    });
+
+    uploadArea.addEventListener("dragleave", function () {
+        uploadArea.classList.remove("dragover");
+    });
+
+    uploadArea.addEventListener("drop", function (event) {
+        event.preventDefault();
+        uploadArea.classList.remove("dragover");
+
+        const file = event.dataTransfer.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        qrFile.files = transfer.files;
+
+        displayFile(file);
+    });
+
+    async function checkServer() {
+        try {
+            const response = await fetch("/health");
+
+            if (!response.ok) {
+                throw new Error("Health check failed");
+            }
+
+            serverStatus.textContent = "Server connected";
+            statusDot.classList.add("online");
+        } catch (error) {
+            serverStatus.textContent = "Server unavailable";
+            statusDot.classList.remove("online");
+        }
+    }
+
+    qrForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        clearMessage();
+
+        const file = qrFile.files[0];
+
+        if (file && (!isAllowedImage(file) || file.size > MAX_FILE_SIZE)) {
+            showMessage("Select a supported image smaller than 10 MB.", "error");
+            return;
+        }
+
+        if (!file && !qrContent.value.trim()) {
+            showMessage("Select a QR image or paste the decoded QR content.", "error");
+            return;
+        }
+
+        analyzeButton.disabled = true;
+        analyzeButton.textContent = "Analyzing...";
+        resultCard.style.display = "none";
+
+        try {
+            let content = qrContent.value.trim();
+            if (!content && file) {
+                if (!("BarcodeDetector" in window)) {
+                    throw new Error("This browser cannot decode QR images automatically. Paste the decoded QR text in the fallback field.");
+                }
+                const detector = new BarcodeDetector({ formats: ["qr_code"] });
+                const bitmap = await createImageBitmap(file);
+                const codes = await detector.detect(bitmap);
+                bitmap.close();
+                if (!codes.length || !codes[0].rawValue) {
+                    throw new Error("No readable QR code was found. Try a clearer image or paste the decoded content.");
+                }
+                content = codes[0].rawValue;
+                qrContent.value = content;
+            }
+
+            const response = await fetch("/api/v1/qr", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content })
+            });
+
+            const responseText = await response.text();
+
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                result = {
+                    response: responseText
+                };
+            }
+
+            if (!response.ok || result.success === false || !result.data) {
+                showMessage(
+                    result.detail || result.message || ("The API returned HTTP " + response.status + "."),
+                    "error"
+                );
+                return;
+            }
+
+            const data = result.data;
+            resultCard.style.display = "block";
+            resultOutput.textContent = [
+                "Classification: " + (data.event_type || "QR content review"),
+                "Risk: " + (data.severity || "unknown") + " · " + (data.risk_score ?? "—") + "/100",
+                "Explanation: " + (data.explanation || "No explanation returned."),
+                "Indicators: " + ((Array.isArray(data.indicators) && data.indicators.length) ? data.indicators.join("; ") : "No configured indicators found."),
+                "Recommended response: " + (data.recommended_action || "Review the decoded destination before opening it."),
+                "Limitations: " + (data.disclaimer || "QR content rules do not prove whether a destination is malicious.")
+            ].join("\n\n");
+            showMessage("QR content analyzed. Review the evidence and verify the destination before opening it.", "info");
+        } catch (error) {
+            showMessage(
+                error.message || "Could not connect to the QR analysis API. Make sure the FastAPI server is running.",
+                "error"
+            );
+        } finally {
+            analyzeButton.disabled = false;
+            analyzeButton.textContent = "Analyze QR Code";
+        }
+    });
+
+    clearButton.addEventListener("click", function () {
+        qrForm.reset();
+        qrPreview.removeAttribute("src");
+        fileInfo.textContent = "";
+        previewContainer.style.display = "none";
+        resultCard.style.display = "none";
+        resultOutput.textContent = "";
+        clearMessage();
+    });
+
+    checkServer();
+</script>
+
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+

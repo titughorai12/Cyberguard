@@ -1,0 +1,845 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | Media Validation</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0b1120;
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            padding: 24px 15px;
+            background: #111827;
+            border-right: 1px solid #263244;
+        }
+
+        .brand {
+            color: #60a5fa;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .brand-subtitle {
+            margin-top: 7px;
+            margin-bottom: 32px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .nav-title {
+            margin: 22px 10px 10px;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #93c5fd;
+            background: #1e3a5f;
+        }
+
+        .sidebar-footer {
+            margin-top: 30px;
+            padding: 14px 8px;
+            border-top: 1px solid #263244;
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .muted {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .connection {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: #263244;
+            color: #e5e7eb;
+        }
+
+        .button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .intro {
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #293b62;
+            border-radius: 14px;
+            background: linear-gradient(115deg, #172554, #172033);
+        }
+
+        .intro h2 {
+            margin-bottom: 10px;
+            color: #bfdbfe;
+            font-size: 20px;
+        }
+
+        .intro p {
+            max-width: 800px;
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .notice {
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            border: 1px solid #854d0e;
+            border-radius: 9px;
+            background: #29200e;
+            color: #fde68a;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 20px;
+        }
+
+        .card {
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid #263244;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .card h2 {
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+
+        .card-description {
+            margin-bottom: 22px;
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .drop-zone {
+            display: flex;
+            min-height: 220px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            border: 2px dashed #374151;
+            border-radius: 12px;
+            background: #0b1120;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragging {
+            border-color: #3b82f6;
+            background: #111e35;
+        }
+
+        .upload-icon {
+            margin-bottom: 15px;
+            font-size: 42px;
+        }
+
+        .drop-zone h3 {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .drop-zone p {
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-details {
+            margin-top: 16px;
+            padding: 13px;
+            border: 1px solid #263244;
+            border-radius: 9px;
+            background: #0b1120;
+            overflow-wrap: anywhere;
+        }
+
+        .file-details strong {
+            color: #93c5fd;
+            font-size: 13px;
+        }
+
+        .file-details p {
+            margin-top: 7px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .preview {
+            width: 100%;
+            max-height: 280px;
+            margin-top: 14px;
+            border-radius: 9px;
+            background: #000;
+            object-fit: contain;
+        }
+
+        .preview[hidden] {
+            display: none;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .result-box {
+            min-height: 230px;
+            padding: 18px;
+            border: 1px solid #263244;
+            border-radius: 10px;
+            background: #0b1120;
+        }
+
+        .result-placeholder {
+            display: flex;
+            min-height: 190px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .result-icon {
+            margin-bottom: 14px;
+            font-size: 35px;
+        }
+
+        .result-placeholder h3 {
+            margin-bottom: 9px;
+            font-size: 15px;
+        }
+
+        .result-placeholder p {
+            max-width: 300px;
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .result-status {
+            margin-bottom: 14px;
+            color: #93c5fd;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .result-text {
+            color: #d1d5db;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .result-error {
+            color: #fca5a5;
+        }
+
+        .details-list {
+            margin-top: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #263244;
+            font-size: 12px;
+        }
+
+        .detail-row span:first-child {
+            color: #9ca3af;
+        }
+
+        .detail-row span:last-child {
+            color: #e5e7eb;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 16px;
+            }
+
+            .brand-subtitle,
+            .nav-title,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .sidebar nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                margin-top: 16px;
+            }
+
+            .nav-link {
+                padding: 9px;
+                font-size: 11px;
+            }
+
+            .main {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <link rel="stylesheet" href="/assets/pages/soc-console.css">
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">🛡 CyberGuard</div>
+        <div class="brand-subtitle">XAI Security Intelligence</div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <nav>
+            <a class="nav-link" href="/assets/pages/dashboard.html">Dashboard</a>
+            <a class="nav-link" href="/assets/pages/url-analysis.html">URL Analysis</a>
+            <a class="nav-link" href="/assets/pages/security-score.html">Security Score</a>
+            <a class="nav-link" href="/assets/pages/threat-dna.html">Threat DNA</a>
+            <a class="nav-link" href="/assets/pages/qr-analysis.html">QR Analysis</a>
+            <a class="nav-link" href="/assets/pages/message-analysis.html">Message Analysis</a>
+            <a class="nav-link" href="/assets/pages/phone-analysis.html">Phone Risk Check</a>
+            <a class="nav-link active" href="/assets/pages/deepfake-analysis.html">Media Validation</a>
+            <a class="nav-link" href="/assets/pages/assistant.html">AI Assistant</a>
+            <a class="nav-link" href="/assets/pages/threats.html">Threat Records</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            CyberGuard XAI Engine<br>
+            Security Analysis Platform
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1>Media Validation</h1>
+                <p class="muted">Submit a media file for the validation checks currently supported by CyberGuard.</p>
+                <p class="connection" id="connection-status">Checking backend connection...</p>
+            </div>
+
+            <a class="button button-secondary" href="/assets/pages/dashboard.html">← Dashboard</a>
+        </header>
+
+        <section class="intro">
+            <h2>🎭 Media Validation Center</h2>
+            <p>
+                Validate an image and, when Gemini is configured, request a general-purpose AI visual screen for signs that may warrant human review.
+            </p>
+        </section>
+
+        <div class="notice">
+            <strong>Model scope:</strong>
+            The configured Gemini model can review visible image content, but it is not a validated forensic deepfake detector. It cannot prove authenticity or manipulation. Uploaded pixels are sent to the configured AI provider when screening is enabled; do not submit sensitive images without authorization.
+        </div>
+
+        <div class="grid">
+
+            <section class="card">
+                <h2>Upload Media</h2>
+                <p class="card-description">
+                    Choose a JPG, PNG, or WEBP image. The image is sent for visual screening only when Gemini is configured.
+                </p>
+
+                <label class="drop-zone" id="drop-zone" for="media-file">
+                    <div class="upload-icon">📁</div>
+                    <h3>Click to select a file</h3>
+                    <p>Or drag and drop a file here.</p>
+                    <p>JPG, JPEG, PNG, WEBP · maximum 10 MB</p>
+                </label>
+
+                <input
+                    type="file"
+                    id="media-file"
+                    class="file-input"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                >
+
+                <div class="file-details" id="file-details" hidden>
+                    <strong id="file-name"></strong>
+                    <p id="file-size"></p>
+                    <p id="file-type"></p>
+                </div>
+
+                <img id="image-preview" class="preview" alt="Selected image preview" hidden>
+
+                <div class="actions">
+                    <button class="button button-primary" id="analyze-button" type="button" disabled>
+                        Run Image Review
+                    </button>
+
+                    <button class="button button-secondary" id="clear-button" type="button">
+                        Clear
+                    </button>
+                </div>
+
+                <p class="muted" style="margin-top: 14px;">
+                    Only upload media you have permission to analyze.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2>Validation Result</h2>
+                <p class="card-description">
+                    The response returned by the backend will appear here.
+                </p>
+
+                <div class="result-box" id="result-box" aria-live="polite">
+                    <div class="result-placeholder" id="result-placeholder">
+                        <div class="result-icon">🔍</div>
+                        <h3>Ready to Validate</h3>
+                    <p>Select an image to validate its metadata and request visual AI screening when configured.</p>
+                    </div>
+
+                    <div id="result-content" hidden>
+                        <div class="result-status" id="result-status"></div>
+                        <div class="result-text" id="result-text"></div>
+                    </div>
+                </div>
+
+                <div class="details-list">
+                    <div class="detail-row">
+                        <span>API endpoint</span>
+                        <span>/api/v1/deepfake</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Selected file</span>
+                        <span id="detail-file">None</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Request status</span>
+                        <span id="request-status">Waiting</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="footer">
+            CyberGuard XAI Engine · Security analysis and awareness
+        </footer>
+
+    </main>
+</div>
+
+<script>
+    const API_URL = "/api/v1/deepfake";
+
+    const fileInput = document.getElementById("media-file");
+    const dropZone = document.getElementById("drop-zone");
+    const analyzeButton = document.getElementById("analyze-button");
+    const clearButton = document.getElementById("clear-button");
+
+    const fileDetails = document.getElementById("file-details");
+    const fileName = document.getElementById("file-name");
+    const fileSize = document.getElementById("file-size");
+    const fileType = document.getElementById("file-type");
+    const detailFile = document.getElementById("detail-file");
+
+    const imagePreview = document.getElementById("image-preview");
+
+    const resultPlaceholder = document.getElementById("result-placeholder");
+    const resultContent = document.getElementById("result-content");
+    const resultStatus = document.getElementById("result-status");
+    const resultText = document.getElementById("result-text");
+    const requestStatus = document.getElementById("request-status");
+
+    let selectedFile = null;
+    let previewUrl = null;
+
+    async function checkBackend() {
+        const status = document.getElementById("connection-status");
+
+        try {
+            const response = await fetch("/health");
+
+            if (!response.ok) {
+                throw new Error("Health check failed");
+            }
+
+            const result = await response.json();
+
+            if (result.status === "healthy") {
+                status.textContent = "● Backend connected";
+                status.style.color = "#34d399";
+            } else {
+                status.textContent = "● Backend available; database needs attention";
+                status.style.color = "#fbbf24";
+            }
+        } catch (error) {
+            status.textContent = "● Backend connection failed";
+            status.style.color = "#f87171";
+        }
+    }
+
+    function hidePreviews() {
+        imagePreview.hidden = true;
+        imagePreview.removeAttribute("src");
+
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+        }
+    }
+
+    function showFile(file) {
+        selectedFile = file || null;
+        hidePreviews();
+
+        if (!selectedFile) {
+            fileDetails.hidden = true;
+            analyzeButton.disabled = true;
+            detailFile.textContent = "None";
+            return;
+        }
+
+        fileDetails.hidden = false;
+        fileName.textContent = selectedFile.name;
+        fileSize.textContent = "Size: " + formatSize(selectedFile.size);
+        fileType.textContent = "Type: " + (selectedFile.type || "Unknown");
+        detailFile.textContent = selectedFile.name;
+
+        analyzeButton.disabled = false;
+
+        previewUrl = URL.createObjectURL(selectedFile);
+
+        if (selectedFile.type.startsWith("image/")) {
+            imagePreview.src = previewUrl;
+            imagePreview.hidden = false;
+        }
+
+        requestStatus.textContent = "File selected";
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+
+        if (bytes < 1024 * 1024) {
+            return (bytes / 1024).toFixed(1) + " KB";
+        }
+
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    }
+
+    function readImageBase64(file) {
+        return new Promise(function (resolve, reject) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const dataUrl = String(reader.result || "");
+                const separator = dataUrl.indexOf(",");
+                if (separator < 0) reject(new Error("Could not read the selected image."));
+                else resolve(dataUrl.slice(separator + 1));
+            };
+            reader.onerror = function () { reject(new Error("Could not read the selected image.")); };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function imageMimeType(file) {
+        if (file.type) return file.type;
+        const extension = file.name.split(".").pop().toLowerCase();
+        return ({ jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" })[extension] || "application/octet-stream";
+    }
+
+    function showResult(title, message, isError) {
+        resultPlaceholder.hidden = true;
+        resultContent.hidden = false;
+
+        resultStatus.textContent = title;
+        resultText.textContent = message;
+        resultText.className = isError ? "result-text result-error" : "result-text";
+    }
+
+    fileInput.addEventListener("change", function () {
+        const file = fileInput.files[0];
+        showFile(file);
+    });
+
+    ["dragenter", "dragover"].forEach(function (eventName) {
+        dropZone.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            dropZone.classList.add("dragging");
+        });
+    });
+
+    ["dragleave", "drop"].forEach(function (eventName) {
+        dropZone.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            dropZone.classList.remove("dragging");
+        });
+    });
+
+    dropZone.addEventListener("drop", function (event) {
+        const file = event.dataTransfer.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        fileInput.files = transfer.files;
+
+        showFile(file);
+    });
+
+    analyzeButton.addEventListener("click", async function () {
+        if (!selectedFile) {
+            showResult("No file selected", "Choose a media file first.", true);
+            return;
+        }
+
+        if (selectedFile.size > 10 * 1024 * 1024) {
+            showResult("Image too large", "Choose an image smaller than 10 MB.", true);
+            requestStatus.textContent = "Image exceeds the 10 MB limit";
+            return;
+        }
+
+        analyzeButton.disabled = true;
+        clearButton.disabled = true;
+        requestStatus.textContent = "Submitting...";
+        showResult("Processing...", "Validating the image and checking whether visual AI screening is available.", false);
+
+        try {
+            const imageBase64 = await readImageBase64(selectedFile);
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    filename: selectedFile.name,
+                    file_size: selectedFile.size,
+                    mime_type: imageMimeType(selectedFile),
+                    image_base64: imageBase64
+                })
+            });
+
+            const rawText = await response.text();
+            let result;
+
+            try {
+                result = JSON.parse(rawText);
+            } catch (error) {
+                result = { message: rawText || "The server returned an empty response." };
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    result.detail ||
+                    result.message ||
+                    "Request failed with HTTP " + response.status
+                );
+            }
+
+            if (!result.success) throw new Error(result.message || "Image review failed.");
+            requestStatus.textContent = result.data && result.data.visual_ai_screening_performed
+                ? "Metadata validated · AI visual screen complete"
+                : "Metadata validated · AI visual screen unavailable";
+            const d = result.data || {};
+            const lines = [
+                "File validation: " + (d.metadata_validation_passed ? "passed" : "not confirmed"),
+                "Visual AI screening: " + (d.visual_ai_screening_performed ? "completed" : "not performed"),
+                "Assessment: " + (d.visual_assessment || "No visual authenticity assessment available"),
+                "Risk score: " + (d.risk_score == null ? "not available" : d.risk_score + "/100"),
+                "Confidence: " + (d.confidence == null ? "not available" : d.confidence + "%"),
+                "Explanation: " + (d.explanation || result.message || "No explanation returned."),
+                "Visible indicators: " + ((Array.isArray(d.indicators) && d.indicators.length) ? d.indicators.join("; ") : "None returned."),
+                "Recommended next step: " + (d.recommended_action || "Verify with the original source or a trusted reviewer."),
+                "Limitations: " + (d.disclaimer || "Visual AI review cannot prove image authenticity.")
+            ];
+            showResult(
+                d.visual_ai_screening_performed ? "AI Visual Review Complete" : "Image Metadata Validated",
+                lines.join("\n\n"),
+                false
+            );
+
+        } catch (error) {
+            requestStatus.textContent = "Failed";
+
+            showResult(
+                "Request Failed",
+                error.message + "\n\nCheck the backend connection and Gemini configuration.",
+                true
+            );
+
+            console.error("Media validation error:", error);
+
+        } finally {
+            analyzeButton.disabled = !selectedFile;
+            clearButton.disabled = false;
+        }
+    });
+
+    clearButton.addEventListener("click", function () {
+        fileInput.value = "";
+        selectedFile = null;
+
+        hidePreviews();
+
+        fileDetails.hidden = true;
+        analyzeButton.disabled = true;
+
+        detailFile.textContent = "None";
+        requestStatus.textContent = "Waiting";
+
+        resultContent.hidden = true;
+        resultPlaceholder.hidden = false;
+
+        resultStatus.textContent = "";
+        resultText.textContent = "";
+    });
+
+    checkBackend();
+</script>
+
+    <script defer src="/assets/public-notice.js"></script>
+</body>
+</html>
+
+
+
