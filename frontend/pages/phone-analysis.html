@@ -435,13 +435,13 @@
         <h2>Phone assessment</h2>
         <article class="screening-score" aria-live="polite">
             <div class="screening-score-header">
-                <h3>Format anomaly screening score</h3>
+                <h3>Spam risk index</h3>
                 <span class="screening-score-value" id="riskScore">—/100</span>
             </div>
-            <div class="score-track" role="meter" aria-label="Format anomaly screening score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="score-track" role="meter" aria-label="Spam risk score unavailable without a phone reputation source" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div class="score-fill" id="riskScoreFill"></div>
             </div>
-            <p id="scoreNote">This score reflects number-format anomalies only. It is not a spam probability or reputation verdict.</p>
+            <p id="scoreNote">No spam-risk index is available because no phone-reputation source is connected.</p>
         </article>
         <div class="assessment-grid">
             <article class="assessment" id="formatAssessment">
@@ -453,6 +453,11 @@
                 <div class="assessment-label">Spam reputation</div>
                 <h3 id="spamStatus">Unknown — not checked</h3>
                 <p id="spamNote"></p>
+            </article>
+            <article class="assessment">
+                <div class="assessment-label">Detected category</div>
+                <h3 id="threatType">Unknown</h3>
+                <p>Format checks cannot identify caller reputation or prove a threat type.</p>
             </article>
         </div>
         <div class="result-section"><h3>Indicators</h3><ul id="indicators"></ul></div>
@@ -483,6 +488,7 @@
     const formatNote = document.getElementById("formatNote");
     const spamStatus = document.getElementById("spamStatus");
     const spamNote = document.getElementById("spamNote");
+    const threatType = document.getElementById("threatType");
     const indicators = document.getElementById("indicators");
     const recommendedAction = document.getElementById("recommendedAction");
     const disclaimer = document.getElementById("disclaimer");
@@ -562,17 +568,19 @@
 
             const data = result.data;
             resultCard.style.display = "block";
-            const score = Number.isFinite(Number(data.risk_score)) ? Math.max(0, Math.min(100, Number(data.risk_score))) : null;
+            const score = data.risk_score != null && Number.isFinite(Number(data.risk_score)) ? Math.max(0, Math.min(100, Number(data.risk_score))) : null;
             riskScore.textContent = score === null ? "Not available" : `${score}/100`;
             riskScoreFill.style.width = score === null ? "0%" : `${score}%`;
+            scoreTrack.style.display = score === null ? "none" : "block";
             scoreTrack.setAttribute("aria-valuenow", score === null ? "0" : String(score));
-            scoreNote.textContent = data.score_note || "This score reflects number-format anomalies only. It is not a spam probability or reputation verdict.";
+            scoreNote.textContent = data.score_note || "No spam-risk index is available because no phone-reputation source is connected.";
             formatStatus.textContent = data.format_status || (data.format_valid ? "Valid-looking format" : "Invalid format");
             formatAssessment.classList.toggle("format-valid", Boolean(data.format_valid));
             formatAssessment.classList.toggle("format-invalid", !data.format_valid);
             formatNote.textContent = data.format_note || "No format details provided.";
             spamStatus.textContent = data.spam_checked ? (data.spam_status || "Checked") : "Unknown — not checked";
             spamNote.textContent = data.spam_note || "No phone reputation source is connected.";
+            threatType.textContent = data.threat_type || "Unknown";
             recommendedAction.textContent = data.recommended_action || "Verify the caller through a trusted channel.";
             disclaimer.textContent = data.disclaimer || "Format checks do not verify ownership or spam reputation.";
             indicators.replaceChildren();
@@ -586,7 +594,7 @@
                 li.textContent = "No simple digit-pattern indicators found.";
                 indicators.appendChild(li);
             }
-            showMessage("Analysis complete. Spam reputation was not checked.", "info");
+            showMessage("Format check complete. Spam reputation was not checked, so no spam-risk percentage is available.", "info");
         } catch (error) {
             showMessage(
                 "Unable to connect to the phone analysis API. Make sure the FastAPI server is running at http://127.0.0.1:8000.",

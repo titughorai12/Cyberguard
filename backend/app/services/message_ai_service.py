@@ -130,7 +130,13 @@ def analyze_message_hybrid(rule_result: dict, message: str) -> dict:
 
     data.update({
         "event_type": threat_type,
+        "threat_types": list(dict.fromkeys(
+            (data.get("threat_types") or [])
+            + ([] if threat_type in {"benign", "uncertain"} else [threat_type])
+        )),
         "risk_score": combined_score,
+        "risk_score_type": "ai_heuristic_index",
+        "score_note": "This 0–100 hybrid screening index combines model output and configured warning rules; it is not a calibrated probability of fraud.",
         "severity": severity,
         "confidence": ai["confidence"],
         "explanation": (

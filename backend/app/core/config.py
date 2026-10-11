@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     # Gemini AI configuration
     GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_MODEL: str = "gemini-3.8-flash"
 
     # Existing Supabase configuration
     SUPABASE_URL: str = "https://mock.supabase.co"

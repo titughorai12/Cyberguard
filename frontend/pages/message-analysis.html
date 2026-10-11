@@ -605,7 +605,9 @@
         const lines = [
             `Detection method: ${method}`,
             `Classification: ${data.event_type || "message review"}`,
+            `Possible threat types: ${(Array.isArray(data.threat_types) && data.threat_types.length ? data.threat_types : ["none detected by configured rules"]).join(", ")}`,
             `Risk: ${data.risk_score ?? "—"}/100 · ${severity}`,
+            `Score meaning: ${data.score_note || "Heuristic screening index, not a calibrated probability."}`,
             "",
             "Why this was flagged",
             data.explanation || "No explanation was returned.",

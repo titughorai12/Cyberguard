@@ -62,6 +62,7 @@ def classify_url(url: str) -> dict:
     score = 0
     evidence = []
     warnings = []
+    threat_types = []
 
     if not isinstance(url, str) or not url.strip():
         return {
@@ -114,6 +115,7 @@ def classify_url(url: str) -> dict:
 
     if parsed.scheme.lower() == "http":
         score += 15
+        threat_types.append("unencrypted_http")
         evidence.append(
             "The URL uses HTTP instead of encrypted HTTPS."
         )
@@ -123,6 +125,7 @@ def classify_url(url: str) -> dict:
         ipaddress.ip_address(hostname)
 
         score += 25
+        threat_types.append("direct_ip_destination")
         evidence.append(
             "The URL uses an IP address instead of a domain name."
         )
@@ -135,6 +138,7 @@ def classify_url(url: str) -> dict:
 
     if len(hostname_parts) >= 5:
         score += 15
+        threat_types.append("excessive_subdomains")
         evidence.append(
             "The hostname contains many domain labels."
         )
@@ -151,6 +155,7 @@ def classify_url(url: str) -> dict:
 
     if matching_words:
         score += 15
+        threat_types.append("credential_bait_words")
         evidence.append(
             "The hostname contains authentication-related "
             "keywords: " + ", ".join(sorted(matching_words))
@@ -161,6 +166,7 @@ def classify_url(url: str) -> dict:
 
     if tld in SUSPICIOUS_TLDS:
         score += 15
+        threat_types.append("higher_risk_domain_suffix")
         evidence.append(
             f"The URL uses the .{tld} top-level domain, "
             "which may warrant additional scrutiny."
@@ -171,6 +177,7 @@ def classify_url(url: str) -> dict:
     # from the actual hostname.
     if "@" in parsed.netloc:
         score += 20
+        threat_types.append("destination_obfuscation")
         evidence.append(
             "The URL contains user-information syntax (@), "
             "which can obscure the destination."
@@ -179,6 +186,7 @@ def classify_url(url: str) -> dict:
     # 7. Check for a long URL.
     if len(url) > 200:
         score += 10
+        threat_types.append("unusually_long_url")
         evidence.append(
             "The URL is unusually long."
         )
@@ -186,6 +194,7 @@ def classify_url(url: str) -> dict:
     # 8. Check for URL shortening services.
     if hostname in URL_SHORTENERS:
         score += 15
+        threat_types.append("shortened_destination")
         evidence.append(
             "The URL uses a shortening service that hides "
             "the final destination."
@@ -194,6 +203,7 @@ def classify_url(url: str) -> dict:
     # 9. Check for a punycode hostname.
     if "xn--" in hostname:
         score += 20
+        threat_types.append("encoded_domain_label")
         evidence.append(
             "The hostname contains an internationalized "
             "domain label that should be checked carefully."
@@ -223,8 +233,11 @@ def classify_url(url: str) -> dict:
         "url": url,
         "domain": hostname,
         "rule_risk_score": score,
+        "risk_score_type": "heuristic_index",
+        "score_note": "This 0–100 score is a rule-based warning index, not a calibrated probability that the site is malicious.",
         "severity": severity,
         "evidence": evidence,
+        "threat_types": threat_types,
         "warnings": warnings,
         "ai_provider": "rules",
         "message": (

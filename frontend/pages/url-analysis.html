@@ -645,7 +645,9 @@
             resultBody.textContent = [
                 "Target: " + (data.domain || data.url || url),
                 "Classification: " + (data.threat_type || "unclassified"),
+                "Possible threat signals: " + ((Array.isArray(data.threat_types) && data.threat_types.length) ? data.threat_types.join(", ") : "none detected by configured rules"),
                 "Risk: " + (data.severity || "unknown") + " · " + (data.risk_score ?? "—") + "/100",
+                "Score meaning: " + (data.score_note || "Heuristic screening index, not a calibrated probability."),
                 "Detection mode: " + (data.analysis_type === "hybrid_rule_ai" ? "Gemini AI + URL rules" : "URL rules only"),
                 "Confidence: " + (data.confidence == null ? "not available" : data.confidence + "%"),
                 "Explanation: " + (data.explanation || ai.explanation || "No explanation returned."),

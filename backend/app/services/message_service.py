@@ -33,6 +33,15 @@ IMPERSONATION_REQUESTS = [
     "buy gift cards", "send payment", "confirm your password",
     "verify your account", "share your password", "urgent payment",
 ]
+PAYMENT_REQUESTS = [
+    "wire transfer", "transfer money", "send payment", "urgent payment",
+    "buy gift cards", "send gift cards", "pay now", "crypto wallet",
+]
+CREDENTIAL_REQUESTS = [
+    "send your otp", "share your otp", "enter your password",
+    "confirm your password", "share your password", "verify your account",
+    "bank details", "credit card",
+]
 
 URL_PATTERN = re.compile(
     r"https?://[^\s]+|www\.[^\s]+",
@@ -104,12 +113,24 @@ def analyze_message(message: str) -> dict:
         "high" if risk_score >= 50 else
         "medium" if risk_score >= 25 else "low"
     )
+    has_url = bool(URL_PATTERN.search(text))
+    credential_request = any(phrase in text for phrase in CREDENTIAL_REQUESTS)
+    payment_request = any(phrase in text for phrase in PAYMENT_REQUESTS)
+    possible_types = []
+    if impersonation_signal:
+        possible_types.append("impersonation")
+    if has_url and (credential_request or any(phrase in text for phrase in SUSPICIOUS_PHRASES)):
+        possible_types.append("phishing")
+    if credential_request:
+        possible_types.append("credential_theft")
+    if payment_request or ("claim your prize" in text or "you have won" in text):
+        possible_types.append("payment_or_prize_scam")
+    if risk_score >= 25 and not possible_types:
+        possible_types.append("social_engineering")
     category = (
-        "impersonation"
-        if impersonation_signal
-        else "phishing"
-        if URL_PATTERN.search(text)
-        else "social_engineering"
+        possible_types[0]
+        if possible_types
+        else "no_known_warning_signals"
     )
     action = (
         "Do not open the link or share credentials. Report the message and verify the request using an independently known contact channel."
@@ -124,8 +145,11 @@ def analyze_message(message: str) -> dict:
         "message": "Message screening completed.",
         "data": {
             "risk_score": risk_score,
+            "risk_score_type": "heuristic_index",
+            "score_note": "This 0–100 score is a rule-based warning index, not a calibrated probability that the message is fraudulent.",
             "severity": severity,
             "event_type": category,
+            "threat_types": possible_types,
             "explanation": (
                 f"{severity.title()} {category.replace('_', ' ')} assessment "
                 f"({risk_score}/100) based on the listed message indicators. "

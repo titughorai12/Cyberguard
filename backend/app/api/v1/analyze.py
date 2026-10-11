@@ -57,7 +57,13 @@ def analyze_url_endpoint(request: URLAnalysisRequest, db: Session = Depends(get_
         analysis_type = "hybrid_rule_ai"
     else:
         score = rule_score
-        threat_type = "suspicious" if score >= 25 else "unknown"
+        rule_types = rules.get("threat_types") or []
+        if "credential_bait_words" in rule_types:
+            threat_type = "possible_phishing"
+        elif rule_types:
+            threat_type = "suspicious_url_pattern"
+        else:
+            threat_type = "no_known_url_indicators"
         confidence = None
         evidence = rules.get("evidence") or []
         explanation = (
@@ -101,7 +107,13 @@ def analyze_url_endpoint(request: URLAnalysisRequest, db: Session = Depends(get_
             "url": result["url"],
             "domain": result.get("domain"),
             "threat_type": threat_type,
+            "threat_types": list(dict.fromkeys(
+                (rules.get("threat_types") or [])
+                + ([ai.get("threat_type")] if ai_ready and ai.get("threat_type") else [])
+            )),
             "risk_score": score,
+            "risk_score_type": "heuristic_index",
+            "score_note": "This is a 0–100 screening index, not a calibrated probability. A live domain-reputation source is not connected.",
             "severity": severity,
             "confidence": confidence,
             "explanation": explanation,

@@ -183,7 +183,21 @@ def analyze_image_visual_content(
             "visual_ai_screening_performed": True,
             "visual_ai_status": "completed",
             "visual_assessment": assessment,
+            "threat_type": (
+                "possible_image_manipulation"
+                if assessment == "possible_visual_manipulation"
+                else "no_obvious_visual_signals"
+                if assessment == "no_obvious_visual_indicators"
+                else "inconclusive_image_review"
+            ),
+            "threat_types": (
+                ["possible_image_manipulation"]
+                if assessment == "possible_visual_manipulation"
+                else []
+            ),
             "risk_score": score,
+            "risk_score_type": "ai_heuristic_index",
+            "score_note": "This AI visual-screening score is not a calibrated probability and cannot prove that an image is manipulated.",
             "severity": severity,
             "confidence": confidence,
             "indicators": evidence,

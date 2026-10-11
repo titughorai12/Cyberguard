@@ -50,15 +50,6 @@ def analyze_phone_number(phone_number: str, region: str = "IN") -> dict:
     if valid and national in {"0123456789", "1234567890", "9876543210"}:
         indicators.append("The national number is a simple digit sequence; verify it was entered correctly.")
 
-    # This score ranks format anomalies for review. It is not a spam probability.
-    risk_score = (0 if valid else 25) + (20 * len(indicators))
-    risk_score = min(risk_score, 100)
-    severity = (
-        "critical" if risk_score >= 80 else
-        "high" if risk_score >= 60 else
-        "medium" if risk_score >= 35 else "low"
-    )
-
     status = "Valid-looking format" if valid else "Invalid or unsupported format"
     spam_note = (
         "No phone-reputation or spam-report database is connected. This prototype cannot determine whether this number is spam or safe."
@@ -71,13 +62,18 @@ def analyze_phone_number(phone_number: str, region: str = "IN") -> dict:
             "region": region,
             "format_valid": valid,
             "format_status": status,
-            "risk_score": risk_score,
-            "severity": severity,
+            # Format checks cannot determine spam reputation. Keep the security
+            # risk score unknown instead of showing a fixed, misleading 25/100.
+            "risk_score": None,
+            "severity": "unknown",
             "score_basis": "format_anomaly_review_only",
-            "score_note": "This score reflects format anomalies only; it is not a spam probability or caller reputation verdict.",
+            "score_note": "A spam-risk score is unavailable because no phone-reputation source is connected. Format validity is shown separately and is not a threat probability.",
+            "format_warning_count": len(indicators) + (0 if valid else 1),
             "format_note": format_note,
             "spam_status": "unknown",
             "spam_checked": False,
+            "threat_type": "invalid_number_format" if not valid else "unknown_unverified_number",
+            "threat_types": ["invalid_number_format"] if not valid else [],
             "spam_note": spam_note,
             "indicators": indicators,
             "recommended_action": (
@@ -92,19 +88,21 @@ def analyze_phone_number(phone_number: str, region: str = "IN") -> dict:
 
 
 def _result(number: str, region: str, valid: bool, note: str) -> dict:
-    risk_score = 0 if valid else 25
     return {
         "phone_number": number,
         "region": region,
         "format_valid": valid,
         "format_status": "Valid-looking format" if valid else "Invalid or unsupported format",
-        "risk_score": risk_score,
-        "severity": "low" if risk_score < 35 else "medium",
+        "risk_score": None,
+        "severity": "unknown",
         "score_basis": "format_anomaly_review_only",
-        "score_note": "This score reflects format anomalies only; it is not a spam probability or caller reputation verdict.",
+        "score_note": "A spam-risk score is unavailable because no phone-reputation source is connected. Format validity is shown separately and is not a threat probability.",
+        "format_warning_count": 0 if valid else 1,
         "format_note": note,
         "spam_status": "unknown",
         "spam_checked": False,
+        "threat_type": "invalid_number_format" if not valid else "unknown_unverified_number",
+        "threat_types": ["invalid_number_format"] if not valid else [],
         "spam_note": "No phone-reputation or spam-report database is connected. This prototype cannot determine whether this number is spam or safe.",
         "indicators": [],
         "recommended_action": "Enter a supported phone-number format and verify the caller through a trusted contact channel.",

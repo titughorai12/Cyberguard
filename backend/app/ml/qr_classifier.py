@@ -12,6 +12,7 @@ def classify_qr_content(content: str) -> dict:
 
     content = content.strip()
     indicators = []
+    threat_types = []
     risk_score = 0
 
     parsed = urlparse(content)
@@ -20,6 +21,7 @@ def classify_qr_content(content: str) -> dict:
     if parsed.scheme.lower() in ("http", "https") and parsed.hostname:
         if parsed.scheme.lower() == "http":
             risk_score += 15
+            threat_types.append("unencrypted_http")
             indicators.append(
                 "The URL uses HTTP instead of encrypted HTTPS."
             )
@@ -28,12 +30,14 @@ def classify_qr_content(content: str) -> dict:
 
         if "xn--" in hostname:
             risk_score += 20
+            threat_types.append("encoded_domain_label")
             indicators.append(
                 "The domain contains encoded international characters."
             )
 
         if "@" in parsed.netloc:
             risk_score += 20
+            threat_types.append("destination_obfuscation")
             indicators.append(
                 "The URL contains an @ symbol in its network location."
             )
@@ -43,6 +47,7 @@ def classify_qr_content(content: str) -> dict:
             for word in ("login", "verify", "password", "banking")
         ):
             risk_score += 15
+            threat_types.append("credential_bait_words")
             indicators.append(
                 "The URL contains words commonly used in login or "
                 "verification links."
@@ -50,6 +55,7 @@ def classify_qr_content(content: str) -> dict:
 
     elif content.lower().startswith(("javascript:", "data:")):
         risk_score = 70
+        threat_types.append("script_or_data_payload")
         indicators.append(
             "The QR content uses a potentially risky data or script scheme."
         )
@@ -94,8 +100,11 @@ def classify_qr_content(content: str) -> dict:
         "data": {
             "content": content,
             "risk_score": risk_score,
+            "risk_score_type": "heuristic_index",
+            "score_note": "This 0–100 score is a rule-based warning index, not a calibrated probability that the QR destination is malicious.",
             "severity": severity,
             "event_type": category,
+            "threat_types": threat_types,
             "explanation": explanation,
             "recommended_action": action,
             "indicators": indicators,
