@@ -28,7 +28,7 @@ def assistant_endpoint(request: AssistantRequest):
 
         if not result.get("success"):
             raise HTTPException(
-                status_code=400,
+                status_code=503,
                 detail=result.get(
                     "message",
                     "Assistant request failed.",

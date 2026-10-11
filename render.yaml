@@ -13,5 +13,7 @@ services:
         value: "true"
       - key: RATE_LIMIT_PER_MINUTE
         value: "30"
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash
       - key: BACKEND_CORS_ORIGINS
         value: "[]"

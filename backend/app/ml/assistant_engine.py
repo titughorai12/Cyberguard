@@ -7,6 +7,7 @@ from google.genai import types
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
+FALLBACK_MODEL = "gemini-3.8-flash"
 
 
 def ask_assistant(question: str) -> dict:
@@ -54,15 +55,38 @@ Return ONLY valid JSON in this format:
 
     try:
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        configured_model = (settings.GEMINI_MODEL or FALLBACK_MODEL).strip()
+        models_to_try = list(dict.fromkeys([configured_model, FALLBACK_MODEL]))
+        response = None
+        selected_model = configured_model
+        for index, model in enumerate(models_to_try):
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        temperature=0.2,
+                        response_mime_type="application/json",
+                    ),
+                )
+                selected_model = model
+                break
+            except Exception as model_error:
+                status_code = (
+                    getattr(model_error, "code", None)
+                    or getattr(model_error, "status_code", None)
+                )
+                if index == 0 and len(models_to_try) > 1 and status_code == 404:
+                    logger.warning(
+                        "Configured Gemini model %s is unavailable; retrying with %s.",
+                        model,
+                        FALLBACK_MODEL,
+                    )
+                    continue
+                raise
 
-        response = client.models.generate_content(
-            model=settings.GEMINI_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.2,
-                response_mime_type="application/json",
-            ),
-        )
+        if response is None:
+            raise RuntimeError("Gemini did not return a response.")
 
         text = (response.text or "").strip()
 
@@ -100,13 +124,23 @@ Return ONLY valid JSON in this format:
                 "recommended_action": recommended_action,
                 "steps": steps,
                 "ai_provider": "gemini",
+                "ai_model": selected_model,
             },
         }
 
-    except Exception:
+    except Exception as error:
         logger.exception("CyberGuard Assistant failed.")
+        status_code = getattr(error, "code", None) or getattr(error, "status_code", None)
+        if status_code in {401, 403}:
+            message = "Gemini rejected the API key or the key lacks API access. Check GEMINI_API_KEY in Render."
+        elif status_code == 429:
+            message = "Gemini's request quota or rate limit was reached. Check Google AI Studio usage and try again later."
+        elif status_code == 404:
+            message = f"The configured Gemini model is unavailable. Set GEMINI_MODEL to {FALLBACK_MODEL} in Render and redeploy."
+        else:
+            message = "Gemini could not complete the request. Check the Render service logs for the provider error."
 
         return {
             "success": False,
-            "message": "CyberGuard Assistant is temporarily unavailable.",
+            "message": message,
         }
